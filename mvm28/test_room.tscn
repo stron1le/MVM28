@@ -1,3 +1,10 @@
-[gd_scene format=3 uid="uid://bewbtejyphgkr"]
+[gd_scene load_steps=2 format=3 uid="uid://bewbtejyphgkr"]
+
+[ext_resource type="PackedScene" uid="uid://1k6dthk2bt0o" path="res://test_character.tscn" id="1_aiegb"]
 
 [node name="TestRoom" type="Node3D"]
+
+[node name="TestCharacter" parent="." instance=ExtResource("1_aiegb")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.47683, 5.75543)
