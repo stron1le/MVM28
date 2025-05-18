@@ -1,10 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://bewbtejyphgkr"]
+[gd_scene load_steps=3 format=3 uid="uid://bewbtejyphgkr"]
 
 [ext_resource type="PackedScene" uid="uid://1k6dthk2bt0o" path="res://test_character.tscn" id="1_aiegb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_aiegb"]
+size = Vector3(11.263, 1, 11.263)
 
 [node name="TestRoom" type="Node3D"]
 
 [node name="TestCharacter" parent="." instance=ExtResource("1_aiegb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.38419e-07, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.47683, 5.75543)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_aiegb")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(11.263, 1, 11.263)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.00722394, -0.961886, 0.273356, -0.20396, 0.266199, 0.942092, -0.978953, -0.0625593, -0.194263, 0, 0, 0)
