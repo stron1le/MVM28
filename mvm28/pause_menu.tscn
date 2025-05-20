@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dgeh53kc8sfcu"]
+
+[node name="PauseMenu" type="Panel"]
+visible = false
+offset_right = 1149.0
+offset_bottom = 649.0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 579.0
+offset_top = 310.0
+offset_right = 619.0
+offset_bottom = 333.0
+text = "Paused"
+horizontal_alignment = 1
+vertical_alignment = 1

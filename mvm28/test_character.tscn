@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://1k6dthk2bt0o"]
+[gd_scene load_steps=5 format=3 uid="uid://1k6dthk2bt0o"]
 
 [ext_resource type="Script" uid="uid://rlyeabgpklfj" path="res://Scripts/test_character.gd" id="1_fksbf"]
+[ext_resource type="PackedScene" uid="uid://dgeh53kc8sfcu" path="res://pause_menu.tscn" id="2_446ey"]
 [ext_resource type="PackedScene" uid="uid://c2tmaa5okxklb" path="res://debug_menu.tscn" id="2_num78"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mii0h"]
@@ -11,24 +12,14 @@ script = ExtResource("1_fksbf")
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
+[node name="CSGSphere3D" type="CSGSphere3D" parent="CSGCylinder3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.636, 1)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CylinderShape3D_mii0h")
 
-[node name="PauseMenu" type="Panel" parent="."]
-visible = false
-offset_right = 1149.0
-offset_bottom = 649.0
-
-[node name="Label" type="Label" parent="PauseMenu"]
-layout_mode = 0
-offset_left = 579.0
-offset_top = 310.0
-offset_right = 619.0
-offset_bottom = 333.0
-text = "Paused"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="PauseMenu" parent="." instance=ExtResource("2_446ey")]
 
 [node name="DebugMenu" parent="." instance=ExtResource("2_num78")]
 visible = false

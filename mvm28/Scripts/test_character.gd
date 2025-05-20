@@ -3,6 +3,7 @@ class_name PlayerCharacter extends CharacterBody3D
 const ACT_JUMP=0x4;
 const JUMP_SPEED=10;
 const MAX_RUN_SPEED=10;
+const MAX_GREATSWORD_WALK_SPEED=3;
 const RUN_ACCELERATION=20;
 const BRAKE_ACCELERATION=20;
 const BRAKE_RANGE=PI*0.63
@@ -10,10 +11,13 @@ const RUN_DECAY=15;
 const MAX_TURN_SPEED_DEGREES=720;
 const MAX_TURN_SPEED=deg_to_rad(MAX_TURN_SPEED_DEGREES);
 const BRAKE_JUMP_SPEEDS=Vector2(20,10)
-enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4}
+enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
 var forwardVel:float=0;
+var swingAftermathTimer:float=0;
+var slideX=0;
+var slideZ=0;
 func _process(delta):
 	if (Input.is_action_just_pressed("Pause")):
 		Globals.paused=!Globals.paused;
@@ -30,6 +34,10 @@ func _physics_process(delta):
 			act_braking(delta);
 		PLAYERSTATE.ACT_JUMP:
 			act_jump(delta);
+		PLAYERSTATE.ACT_GREATSWORD_WALK:
+			act_greatsword_walk(delta);
+		PLAYERSTATE.ACT_GREATSWORD_SWING:
+			act_greatsword_swing(delta);
 		_:
 			act_walking(delta);
 	#print(currentState);
@@ -53,6 +61,7 @@ func act_walking(delta):
 	move_and_slide();
 	if (forwardVel==0):
 		currentState=PLAYERSTATE.ACT_STANDING;
+	enter_greatsword_check();
 	check_common_exits();
 	return true;
 func act_standing(delta):
@@ -69,6 +78,7 @@ func act_standing(delta):
 	move_and_slide();
 	if (forwardVel!=0):
 		currentState=PLAYERSTATE.ACT_WALKING;
+	enter_greatsword_check();
 	return true;
 func act_braking(delta):
 	forwardVel=move_toward(forwardVel,0,BRAKE_ACCELERATION*delta);
@@ -100,5 +110,32 @@ func act_jump(delta):
 	move_and_slide();
 	if (is_on_floor()):
 		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_RUNNING;
+func act_greatsword_walk(delta):
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	var intendedMagnitude=movementVector.length();
+	if (movementVector!=Vector2.ZERO):
+		var forwardVec=transform.basis.z;
+		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
+		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
+		prevAngle=targetAngle;
+	forwardVel=move_toward(forwardVel,MAX_GREATSWORD_WALK_SPEED*intendedMagnitude,RUN_ACCELERATION*delta)	
+	velocity=transform.basis.z*forwardVel;
+	move_and_slide();
+	if (Input.is_action_just_released("BButtonCharge")):
+		currentState=PLAYERSTATE.ACT_GREATSWORD_SWING;
+		swingAftermathTimer=2;
+	return true;
+func act_greatsword_swing(delta):
+	swingAftermathTimer=move_toward(swingAftermathTimer,0,delta);
+	if (swingAftermathTimer<=0):
+		if (forwardVel==0):
+			currentState==PLAYERSTATE.ACT_WALKING
+		else:
+			currentState=PLAYERSTATE.ACT_STANDING;
+	move_and_slide();
 func get_state_name():
 	return PLAYERSTATE.keys()[currentState]
+func enter_greatsword_check():
+	if (Input.is_action_just_pressed("BButtonCharge")):
+		currentState=PLAYERSTATE.ACT_GREATSWORD_WALK
