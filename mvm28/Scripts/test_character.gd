@@ -7,6 +7,7 @@ const BRAKE_ACCELERATION=20;
 const BRAKE_RANGE=PI*0.63
 const RUN_DECAY=15;
 const MAX_TURN_SPEED_DEGREES=720;
+const COYOTE_TIME_FRAMES=60;
 const MAX_TURN_SPEED=deg_to_rad(MAX_TURN_SPEED_DEGREES);
 const BRAKE_JUMP_SPEEDS=Vector2(20,10)
 enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING}
@@ -16,6 +17,7 @@ var forwardVel:float=0;
 var swingAftermathTimer:float=0;
 var slideX=0;
 var slideZ=0;
+var coyote_timer=-1;
 func _process(delta):
 	if (Input.is_action_just_pressed("Pause")):
 		Globals.paused=!Globals.paused;
@@ -59,11 +61,12 @@ func act_walking(delta):
 		if (shouldRotate):
 			transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 			prevAngle=targetAngle;
-	forwardVel=move_toward(forwardVel,MAX_RUN_SPEED*intendedMagnitude,RUN_ACCELERATION*delta)	
+	forwardVel=move_toward(forwardVel,MAX_RUN_SPEED*intendedMagnitude,RUN_ACCELERATION*delta)
 	velocity=transform.basis.z*forwardVel;
-	move_and_slide();
 	if (forwardVel==0):
 		currentState=PLAYERSTATE.ACT_STANDING;
+	move_and_slide();
+	coyoteTimerSteps();
 	enter_greatsword_check();
 	check_common_exits();
 	return true;
@@ -82,7 +85,9 @@ func act_standing(delta):
 	move_and_slide();
 	if (forwardVel!=0):
 		currentState=PLAYERSTATE.ACT_WALKING;
+	coyoteTimerSteps();
 	enter_greatsword_check();
+	check_common_exits();
 	return true;
 func act_braking(delta):
 	forwardVel=move_toward(forwardVel,0,BRAKE_ACCELERATION*delta);
@@ -146,3 +151,12 @@ func enter_greatsword_check():
 		currentState=PLAYERSTATE.ACT_GREATSWORD_WALK
 func get_camera_yaw():
 	return deg_to_rad(get_viewport().get_camera_3d().global_rotation_degrees.y);
+func coyoteTimerSteps():
+	if (is_on_floor()):
+		coyote_timer=-1;
+	elif (coyote_timer==-1):
+		coyote_timer=COYOTE_TIME_FRAMES;
+	else:
+		coyote_timer-=1;
+		if (coyote_timer==0):
+			currentState=PLAYERSTATE.ACT_JUMP;
