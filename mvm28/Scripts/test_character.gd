@@ -1,6 +1,4 @@
 class_name PlayerCharacter extends CharacterBody3D
-
-const ACT_JUMP=0x4;
 const JUMP_SPEED=10;
 const MAX_RUN_SPEED=10;
 const MAX_GREATSWORD_WALK_SPEED=3;
@@ -48,6 +46,8 @@ func act_walking(delta):
 	var forwardVec = transform.basis.z;
 	forwardVec.y=0;
 	var movementVector3D = Vector3(movementVector.x,0,movementVector.y)
+	movementVector3D=movementVector3D.rotated(transform.basis.y,get_camera_yaw());
+	print(get_camera_yaw());
 	if (movementVector!=Vector2.ZERO):
 		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		if (abs(targetAngle)>=(BRAKE_RANGE)):
@@ -71,6 +71,7 @@ func act_standing(delta):
 	if (movementVector!=Vector2.ZERO):
 		var forwardVec=transform.basis.z;
 		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+		movementVector3D=movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 		prevAngle=targetAngle;
@@ -100,7 +101,7 @@ func check_common_exits():
 				velocity=transform.basis.z*BRAKE_JUMP_SPEEDS.x+velocity.y*transform.basis.y;
 			else:
 				velocity=movementVector3D.normalized()*BRAKE_JUMP_SPEEDS.x+velocity.y*transform.basis.y;
-		currentState=ACT_JUMP;
+		currentState=PLAYERSTATE.ACT_JUMP;
 		return true;
 	return false;
 	pass;
@@ -140,3 +141,5 @@ func get_state_name():
 func enter_greatsword_check():
 	if (Input.is_action_just_pressed("BButtonCharge")):
 		currentState=PLAYERSTATE.ACT_GREATSWORD_WALK
+func get_camera_yaw():
+	return deg_to_rad(get_viewport().get_camera_3d().global_rotation_degrees.y);
