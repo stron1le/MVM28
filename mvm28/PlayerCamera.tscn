@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5iohw4yba8m4"]
+
+[ext_resource type="Script" uid="uid://mc10bkyv5db2" path="res://TwistPivot.gd" id="1_88orb"]
+[ext_resource type="Script" uid="uid://dldmvwv2g5uhd" path="res://TestCamera.gd" id="1_ckl5i"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_006j3"]
+
+[node name="TwistPivot" type="Node3D"]
+script = ExtResource("1_88orb")
+
+[node name="PitchPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="PitchPivot"]
+collision_mask = 2
+shape = SubResource("SphereShape3D_006j3")
+spring_length = 7.0
+
+[node name="Camera3D" type="Camera3D" parent="PitchPivot/SpringArm3D"]
+script = ExtResource("1_ckl5i")

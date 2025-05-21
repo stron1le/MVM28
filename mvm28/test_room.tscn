@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bewbtejyphgkr"]
+[gd_scene load_steps=4 format=3 uid="uid://bewbtejyphgkr"]
 
 [ext_resource type="PackedScene" uid="uid://1k6dthk2bt0o" path="res://test_character.tscn" id="1_aiegb"]
+[ext_resource type="PackedScene" uid="uid://c5iohw4yba8m4" path="res://PlayerCamera.tscn" id="2_oqbmf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_aiegb"]
 size = Vector3(11.263, 1, 11.263)
@@ -9,9 +10,6 @@ size = Vector3(11.263, 1, 11.263)
 
 [node name="TestCharacter" parent="." instance=ExtResource("1_aiegb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.38419e-07, 0)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.47683, 5.75543)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
@@ -25,3 +23,6 @@ size = Vector3(11.263, 1, 11.263)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.00722394, -0.961886, 0.273356, -0.20396, 0.266199, 0.942092, -0.978953, -0.0625593, -0.194263, 0, 0, 0)
+
+[node name="TwistPivot" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_oqbmf")]
+target = NodePath("../TestCharacter")

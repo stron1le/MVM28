@@ -39,6 +39,7 @@ func _physics_process(delta):
 		PLAYERSTATE.ACT_GREATSWORD_SWING:
 			act_greatsword_swing(delta);
 		_:
+			print("There is no such state "+str(currentState))
 			act_walking(delta);
 	#print(currentState);
 func act_walking(delta):
