@@ -47,14 +47,16 @@ func act_walking(delta):
 	forwardVec.y=0;
 	var movementVector3D = Vector3(movementVector.x,0,movementVector.y)
 	movementVector3D=movementVector3D.rotated(transform.basis.y,get_camera_yaw());
-	print(get_camera_yaw());
+	var shouldRotate:bool = true;
 	if (movementVector!=Vector2.ZERO):
 		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		if (abs(targetAngle)>=(BRAKE_RANGE)):
 			currentState=PLAYERSTATE.ACT_BRAKING;
 			intendedMagnitude=0;
+			shouldRotate=false;
 		elif (abs(targetAngle)>MAX_TURN_SPEED*delta):
 			targetAngle=sign(targetAngle)*MAX_TURN_SPEED*delta;
+		if (shouldRotate):
 			transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 			prevAngle=targetAngle;
 	forwardVel=move_toward(forwardVel,MAX_RUN_SPEED*intendedMagnitude,RUN_ACCELERATION*delta)	
@@ -94,6 +96,7 @@ func check_common_exits():
 	var intendedMagnitude=movementVector.length();
 	var brakeCheck=currentState==PLAYERSTATE.ACT_BRAKING;
 	var movementVector3D=Vector3(movementVector.x,0,movementVector.y);
+	movementVector3D=movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 	if (Input.is_action_just_pressed("Jump")):
 		velocity.y=BRAKE_JUMP_SPEEDS.y if (brakeCheck) else JUMP_SPEED;
 		if (brakeCheck):
