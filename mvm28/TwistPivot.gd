@@ -6,11 +6,10 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
 func _physics_process(delta):
 	if (target!=null):
-		global_position=target.global_position;
+		global_position=target.global_position+Vector3.UP;
 	var cam_input = Input.get_vector("TurnCameraLeftController","TurnCameraRightController","TurnCameraDownController","TurnCameraUpController");
 	if (cam_input!=Vector2.ZERO):
 		var cam_target_angle=CAMERA_TURN_SPEED*cam_input.x*delta
-		print(cam_target_angle);
 		transform.basis=transform.basis.rotated(transform.basis.y,cam_target_angle);
 		cam_target_angle=CAMERA_TURN_SPEED*cam_input.y*delta;
 		$PitchPivot.transform.basis=$PitchPivot.transform.basis.rotated($PitchPivot.transform.basis.x,cam_target_angle)
