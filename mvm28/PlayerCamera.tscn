@@ -3,11 +3,15 @@
 [ext_resource type="Script" uid="uid://mc10bkyv5db2" path="res://TwistPivot.gd" id="1_88orb"]
 [ext_resource type="Script" uid="uid://dldmvwv2g5uhd" path="res://TestCamera.gd" id="1_ckl5i"]
 
-[node name="TwistPivot" type="Node3D"]
+[node name="TwistPivot" type="Node3D" node_paths=PackedStringArray("displacer")]
 script = ExtResource("1_88orb")
+displacer = NodePath("PitchPivot/Displacer")
 
 [node name="PitchPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, 0)
+
+[node name="Displacer" type="Node3D" parent="PitchPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 0, 0)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="PitchPivot"]
 collision_mask = 258
