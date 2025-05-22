@@ -1,5 +1,6 @@
 class_name PlayerCharacter extends CharacterBody3D
-const JUMP_SPEED=10;
+const INITIAL_JUMP_SPEED=5;
+const RUNNING_JUMP_MULTIPLIER=0.8;
 const MAX_RUN_SPEED=10;
 const MAX_GREATSWORD_WALK_SPEED=3;
 const RUN_ACCELERATION=20;
@@ -7,9 +8,10 @@ const BRAKE_ACCELERATION=20;
 const BRAKE_RANGE=PI*0.63
 const RUN_DECAY=15;
 const MAX_TURN_SPEED_DEGREES=720;
-const COYOTE_TIME_FRAMES=60;
+const COYOTE_TIME_FRAMES=5;
 const MAX_TURN_SPEED=deg_to_rad(MAX_TURN_SPEED_DEGREES);
 const BRAKE_JUMP_SPEEDS=Vector2(20,10)
+const CUT_JUMP_MULTIPLIER=0.5;
 enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
@@ -18,6 +20,7 @@ var swingAftermathTimer:float=0;
 var slideX=0;
 var slideZ=0;
 var coyote_timer=-1;
+var canCutJump:bool=false;
 func _process(delta):
 	if (Input.is_action_just_pressed("Pause")):
 		Globals.paused=!Globals.paused;
@@ -103,23 +106,30 @@ func check_common_exits():
 	var movementVector3D=Vector3(movementVector.x,0,movementVector.y);
 	movementVector3D=movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 	if (Input.is_action_just_pressed("Jump")):
-		velocity.y=BRAKE_JUMP_SPEEDS.y if (brakeCheck) else JUMP_SPEED;
+		velocity.y=BRAKE_JUMP_SPEEDS.y if (brakeCheck) else calculate_Yspeed_based_on_horizontal_speed(INITIAL_JUMP_SPEED,RUNNING_JUMP_MULTIPLIER);
 		if (brakeCheck):
 			if (intendedMagnitude==0):
 				velocity=transform.basis.z*BRAKE_JUMP_SPEEDS.x+velocity.y*transform.basis.y;
 			else:
 				velocity=movementVector3D.normalized()*BRAKE_JUMP_SPEEDS.x+velocity.y*transform.basis.y;
 		currentState=PLAYERSTATE.ACT_JUMP;
+		canCutJump=true;
 		return true;
 	return false;
 	pass;
+func calculate_Yspeed_based_on_horizontal_speed(initialSpeed,multiplier):
+	return initialSpeed+multiplier*forwardVel;
 func act_jump(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var intendedMagnitude=movementVector.length();
+	if (canCutJump and !Input.is_action_pressed("Jump") and velocity.y>0):
+		velocity.y*=CUT_JUMP_MULTIPLIER;
+		canCutJump=false;
 	velocity+=get_gravity()*delta;
+	print(velocity.y);
 	move_and_slide();
 	if (is_on_floor()):
-		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_RUNNING;
+		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_WALKING;
 func act_greatsword_walk(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var intendedMagnitude=movementVector.length();
