@@ -7,19 +7,26 @@ offset_right = 1153.0
 offset_bottom = 646.0
 script = ExtResource("1_u3ugm")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="EquippedItemLabel" type="Label" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="EquippedItemLabel" type="Label" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Equipped Item: "
 
-[node name="VelocityLabel" type="Label" parent="VBoxContainer"]
+[node name="VelocityLabel" type="Label" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Velocity: "
 
-[node name="PlayerStateLabel" type="Label" parent="VBoxContainer"]
+[node name="PlayerStateLabel" type="Label" parent="HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Player State:"
+
+[node name="ForwardVelLabel" type="Label" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2

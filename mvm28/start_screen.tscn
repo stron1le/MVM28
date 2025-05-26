@@ -1,0 +1,122 @@
+[gd_scene load_steps=3 format=3 uid="uid://bkpsvcceuq300"]
+
+[ext_resource type="Script" uid="uid://b7efqvc0pkohk" path="res://start_screen.gd" id="1_ncxyx"]
+[ext_resource type="Script" uid="uid://em4hj14pl37n" path="res://SaveHolder.gd" id="2_pevhg"]
+
+[node name="Start Screen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ncxyx")
+
+[node name="MainStart" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainStart"]
+layout_mode = 0
+offset_left = 523.0
+offset_top = 198.0
+offset_right = 651.0
+offset_bottom = 299.0
+
+[node name="NewGameButton" type="Button" parent="MainStart/VBoxContainer"]
+layout_mode = 2
+text = "New Game"
+
+[node name="ContinueButton" type="Button" parent="MainStart/VBoxContainer"]
+layout_mode = 2
+text = "Continue Game"
+
+[node name="FileSelectButton" type="Button" parent="MainStart/VBoxContainer"]
+layout_mode = 2
+text = "File Select"
+
+[node name="QuitButton" type="Button" parent="MainStart/VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[node name="FileSelectMenu" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 1156.0
+offset_bottom = 651.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FileSelectMenu"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_bottom = 4.0
+grow_horizontal = 2
+
+[node name="FileTitle" type="Panel" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(1148, 30)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SelectFileLabel" type="Label" parent="FileSelectMenu/VBoxContainer/FileTitle"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "SELECT A FILE:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SaveHolder" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+
+[node name="SaveHolder2" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+saveId = 1
+
+[node name="SaveHolder3" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+saveId = 2
+
+[node name="SaveHolder4" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+saveId = 3
+
+[node name="SaveHolder5" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+saveId = 4
+
+[node name="SaveHolder6" type="Button" parent="FileSelectMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "SaveFile0"
+script = ExtResource("2_pevhg")
+saveId = 5
+
+[connection signal="button_down" from="MainStart/VBoxContainer/NewGameButton" to="." method="_on_new_game_button_button_down"]
+[connection signal="button_down" from="MainStart/VBoxContainer/ContinueButton" to="." method="_on_continue_game_button_button_down"]
+[connection signal="button_down" from="MainStart/VBoxContainer/FileSelectButton" to="." method="_on_file_select_button_button_down"]
+[connection signal="button_down" from="MainStart/VBoxContainer/QuitButton" to="." method="_on_quit_button_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder" to="FileSelectMenu/VBoxContainer/SaveHolder" method="_on_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder2" to="FileSelectMenu/VBoxContainer/SaveHolder2" method="_on_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder3" to="FileSelectMenu/VBoxContainer/SaveHolder3" method="_on_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder4" to="FileSelectMenu/VBoxContainer/SaveHolder4" method="_on_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder5" to="FileSelectMenu/VBoxContainer/SaveHolder5" method="_on_button_down"]
+[connection signal="button_down" from="FileSelectMenu/VBoxContainer/SaveHolder6" to="FileSelectMenu/VBoxContainer/SaveHolder6" method="_on_button_down"]

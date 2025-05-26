@@ -2,6 +2,7 @@ extends Node3D
 @export var target:Node3D;
 @export var displacer:Node3D;
 @export var maxDisplacement=2;
+@export var cam:Camera3D;
 const CAMERA_TURN_SPEED=deg_to_rad(180);
 var mouseHidden:bool=true;
 func _ready():
@@ -34,4 +35,6 @@ func moveCameraRelative(delta):
 		displacer.position.y=0;
 		displacer.position.z=0;
 		$PitchPivot/SpringArm3D.position.x=move_toward($PitchPivot/SpringArm3D.position.x,displacer.position.x,delta);
-		print($PitchPivot/SpringArm3D.position)
+		#print($PitchPivot/SpringArm3D.position)
+func make_current():
+	cam.current=true;

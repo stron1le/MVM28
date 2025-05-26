@@ -6,9 +6,11 @@
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mii0h"]
 
-[node name="TestCharacter" type="CharacterBody3D"]
+[node name="TestCharacter" type="CharacterBody3D" groups=["Player"]]
 collision_mask = 2
 script = ExtResource("1_fksbf")
+currentState = 1
+forwardVel = 7.0
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

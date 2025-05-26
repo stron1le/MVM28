@@ -5,17 +5,21 @@ const MAX_RUN_SPEED=10;
 const MAX_GREATSWORD_WALK_SPEED=3;
 const RUN_ACCELERATION=20;
 const BRAKE_ACCELERATION=20;
-const BRAKE_RANGE=PI*0.63
+const BRAKE_RANGE=PI*0.77
 const RUN_DECAY=15;
 const MAX_TURN_SPEED_DEGREES=720;
 const COYOTE_TIME_FRAMES=5;
 const MAX_TURN_SPEED=deg_to_rad(MAX_TURN_SPEED_DEGREES);
 const BRAKE_JUMP_SPEEDS=Vector2(20,10)
 const CUT_JUMP_MULTIPLIER=0.5;
-enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING}
+const STANDARD_DRAG=0.35;
+const STRAIN_FORWARD_FACTOR=1.5;
+const DRAG_EXCESS_FORWARD_FACTOR=1.0;
+const DRAG_EXCESS_BACKWARD_FACTOR=2.0;
+enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
-var forwardVel:float=0;
+@export var forwardVel:float=0;
 var swingAftermathTimer:float=0;
 var slideX=0;
 var slideZ=0;
@@ -41,6 +45,8 @@ func _physics_process(delta):
 			act_greatsword_walk(delta);
 		PLAYERSTATE.ACT_GREATSWORD_SWING:
 			act_greatsword_swing(delta);
+		PLAYERSTATE.ACT_TEST:
+			act_test(delta);
 		_:
 			print("There is no such state "+str(currentState))
 			act_walking(delta);
@@ -116,7 +122,6 @@ func check_common_exits():
 		canCutJump=true;
 		return true;
 	return false;
-	pass;
 func calculate_Yspeed_based_on_horizontal_speed(initialSpeed,multiplier):
 	return initialSpeed+multiplier*forwardVel;
 func act_jump(delta):
@@ -126,7 +131,6 @@ func act_jump(delta):
 		velocity.y*=CUT_JUMP_MULTIPLIER;
 		canCutJump=false;
 	velocity+=get_gravity()*delta;
-	print(velocity.y);
 	move_and_slide();
 	if (is_on_floor()):
 		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_WALKING;
@@ -170,3 +174,55 @@ func coyoteTimerSteps():
 		coyote_timer-=1;
 		if (coyote_timer==0):
 			currentState=PLAYERSTATE.ACT_JUMP;
+func aerialAdjustment(delta):
+	var dragThreshold
+	var intendedYawDiff;
+	var intendedMagnitude;
+	match(currentState):
+		PLAYERSTATE.ACT_JUMP:
+			dragThreshold=MAX_RUN_SPEED;
+		_:
+			dragThreshold=MAX_RUN_SPEED*1.5;
+	forwardVel=move_toward(forwardVel,0,delta*STANDARD_DRAG);
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector!=Vector2.ZERO):
+		intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
+		intendedMagnitude=movementVector3D.length();
+		forwardVel+=STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*delta*intendedMagnitude;
+		transform.basis=transform.basis.rotated(transform.basis.y,PI*sin(intendedYawDiff)*intendedMagnitude*delta)
+	if (forwardVel>dragThreshold):
+		forwardVel-=1.0*delta;
+	if (forwardVel<-16):
+		forwardVel+=1.0*delta;
+	var magVector=forwardVel*transform.basis.z;
+	velocity=Vector3(magVector.x,velocity.y,magVector.z);
+	#print(velocity);
+func act_test(delta):
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+func act_test_jump_momentum(delta):
+	var dragThreshold
+	var intendedYawDiff;
+	var intendedMagnitude;
+	match(currentState):
+		PLAYERSTATE.ACT_TEST:
+			dragThreshold=MAX_RUN_SPEED;
+		_:
+			dragThreshold=MAX_RUN_SPEED*1.5;
+	forwardVel=move_toward(forwardVel,0,delta*STANDARD_DRAG);
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector!=Vector2.ZERO):
+		intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
+		intendedMagnitude=movementVector3D.length();
+		forwardVel += (STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*intendedMagnitude*delta);
+		var rotationComp=sin(intendedYawDiff)*intendedMagnitude;
+		print("");
+		print("intendedYawDiff: "+str(intendedYawDiff));
+		print("intendedMagnitude: "+str(intendedMagnitude));
+		print("rotationComp: "+str(rotationComp));
+	#transform.basis=transform.basis.rotated(transform.basis.y,PI*delta);
+func get_debug_properties():
+	var propertiesDict={"ForwardVel":func():return forwardVel,"Velocity":func():return velocity, "Current State":func():return get_state_name(),"ForwardVel2":func():return forwardVel,"ForwardVel3":func():return forwardVel,"ForwardVel4":func():return forwardVel,"ForwardVel5":func():return forwardVel,"ForwardVel6":func():return forwardVel,"ForwardVel7":func():return forwardVel,"ForwardVel8":func():return forwardVel,"ForwardVel9":func():return forwardVel}
+	return propertiesDict;

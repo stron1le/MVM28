@@ -6,7 +6,9 @@ const GAME_MODE_MENU=0x1;
 const GAME_MODE_CUTSCENE=0x2;
 
 var paused=false;
+var playerPosition = -1;
 var gameMode=GAME_MODE_ACTION;
+var spawnLocations={};
 func get_terrain(terrain_name:String):
 	match(terrain_name):
 		"STANDARD_TERRAIN":
