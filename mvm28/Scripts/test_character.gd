@@ -25,6 +25,16 @@ var slideX=0;
 var slideZ=0;
 var coyote_timer=-1;
 var canCutJump:bool=false;
+var maxHP=30;
+var HP=30;
+signal HPAdjust;
+static var singleton;
+func _ready():
+	singleton=self;
+func HPChanged(amount):
+	HP+=amount;
+	HP=clamp(HP,0,maxHP)
+	HPAdjust.emit();
 func _process(delta):
 	if (Input.is_action_just_pressed("Pause")):
 		Globals.paused=!Globals.paused;

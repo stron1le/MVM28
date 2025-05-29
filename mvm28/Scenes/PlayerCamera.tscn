@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5iohw4yba8m4"]
 
-[ext_resource type="Script" uid="uid://mc10bkyv5db2" path="res://TwistPivot.gd" id="1_88orb"]
-[ext_resource type="Script" uid="uid://dldmvwv2g5uhd" path="res://TestCamera.gd" id="1_ckl5i"]
+[ext_resource type="Script" uid="uid://mc10bkyv5db2" path="res://Scripts/TwistPivot.gd" id="1_bjrvu"]
+[ext_resource type="Script" uid="uid://dldmvwv2g5uhd" path="res://Scripts/TestCamera.gd" id="2_46jwi"]
 
 [node name="TwistPivot" type="Node3D" node_paths=PackedStringArray("displacer", "cam")]
-script = ExtResource("1_88orb")
+script = ExtResource("1_bjrvu")
 displacer = NodePath("PitchPivot/Displacer")
 cam = NodePath("PitchPivot/SpringArm3D/Camera3D")
 
@@ -20,4 +20,4 @@ spring_length = 7.0
 
 [node name="Camera3D" type="Camera3D" parent="PitchPivot/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 1.49012e-08, 0, -1.49012e-08, 1, 0, 0, 0)
-script = ExtResource("1_ckl5i")
+script = ExtResource("2_46jwi")

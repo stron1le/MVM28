@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dgeh53kc8sfcu"]
 
 [node name="PauseMenu" type="Panel"]
-visible = false
 offset_right = 1149.0
 offset_bottom = 649.0
 

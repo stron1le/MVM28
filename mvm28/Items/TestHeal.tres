@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://bhfmj7svhbnt2"]
+
+[ext_resource type="Script" uid="uid://c7kje653kde45" path="res://Scripts/Item.gd" id="1_x7xic"]
+
+[resource]
+script = ExtResource("1_x7xic")
+ID = 0
+name = "Potion"
+duplicatesAllowed = true
+itemType = 2
+itemUseType = 0
+metadata/_custom_type_script = "uid://c7kje653kde45"

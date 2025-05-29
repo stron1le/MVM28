@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bkpsvcceuq300"]
 
-[ext_resource type="Script" uid="uid://b7efqvc0pkohk" path="res://start_screen.gd" id="1_ncxyx"]
-[ext_resource type="Script" uid="uid://em4hj14pl37n" path="res://SaveHolder.gd" id="2_pevhg"]
+[ext_resource type="Script" uid="uid://b7efqvc0pkohk" path="res://Scripts/start_screen.gd" id="1_ainjc"]
+[ext_resource type="Script" uid="uid://em4hj14pl37n" path="res://Scripts/SaveHolder.gd" id="2_60ddj"]
 
 [node name="Start Screen" type="Control"]
 layout_mode = 3
@@ -10,7 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ncxyx")
+script = ExtResource("1_ainjc")
 
 [node name="MainStart" type="Control" parent="."]
 anchors_preset = 0
@@ -73,41 +73,41 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 
 [node name="SaveHolder2" type="Button" parent="FileSelectMenu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 saveId = 1
 
 [node name="SaveHolder3" type="Button" parent="FileSelectMenu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 saveId = 2
 
 [node name="SaveHolder4" type="Button" parent="FileSelectMenu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 saveId = 3
 
 [node name="SaveHolder5" type="Button" parent="FileSelectMenu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 saveId = 4
 
 [node name="SaveHolder6" type="Button" parent="FileSelectMenu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "SaveFile0"
-script = ExtResource("2_pevhg")
+script = ExtResource("2_60ddj")
 saveId = 5
 
 [connection signal="button_down" from="MainStart/VBoxContainer/NewGameButton" to="." method="_on_new_game_button_button_down"]

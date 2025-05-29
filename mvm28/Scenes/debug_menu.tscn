@@ -1,11 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://c2tmaa5okxklb"]
 
-[ext_resource type="Script" uid="uid://b5xw7wgfsfwo0" path="res://debug_menu.gd" id="1_u3ugm"]
+[ext_resource type="Script" uid="uid://b5xw7wgfsfwo0" path="res://Scripts/debug_menu.gd" id="1_842g3"]
 
 [node name="DebugMenu" type="Panel"]
 offset_right = 1153.0
 offset_bottom = 646.0
-script = ExtResource("1_u3ugm")
+script = ExtResource("1_842g3")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
