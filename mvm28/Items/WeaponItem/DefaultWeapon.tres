@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="WeaponItem" load_steps=3 format=3 uid="uid://bq70rqinnxq4o"]
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=4 format=3 uid="uid://bq70rqinnxq4o"]
 
+[ext_resource type="Texture2D" uid="uid://bpswnkeocihea" path="res://PNGs/GreatswordImage.png" id="1_8yn5j"]
 [ext_resource type="Script" uid="uid://dd33ihx1t10lu" path="res://Scripts/WeaponItem.gd" id="1_q14lo"]
 [ext_resource type="PackedScene" uid="uid://b06xhss8nf3ju" path="res://Scenes/equippable_weapon.tscn" id="2_soqtd"]
 
@@ -8,11 +9,14 @@ script = ExtResource("1_q14lo")
 weaponID = 0
 weaponScene = ExtResource("2_soqtd")
 ID = 0
+instanceID = 0
 name = ""
+stackable = false
 duplicatesAllowed = true
-itemType = 0
+itemType = 3
 itemUseType = 0
 quantity = 1
 recreateID = true
+icon = ExtResource("1_8yn5j")
 metadata/_custom_type_script = "uid://dd33ihx1t10lu"
 metadata/Metatest = true

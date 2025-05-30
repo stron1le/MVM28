@@ -10,7 +10,10 @@ var playerPosition = -1;
 var gameMode=GAME_MODE_ACTION;
 var spawnLocations={};
 var Inventory = {};
-
+func _process(delta):
+	if (Input.is_action_just_pressed("TriggerRight") and !paused):
+		var x = load("res://Items/WeaponItem/DefaultWeapon.tres").duplicate();
+		add_to_Inventory(x);
 func get_terrain(terrain_name:String):
 	match(terrain_name):
 		"STANDARD_TERRAIN":
@@ -23,7 +26,13 @@ func getInventoryDictionary():
 		var itemToString=Inventory.get(k);
 		newDict.get_or_add(k,itemToString.convertToDictionary());
 	return newDict;
-func add_to_Inventory(newItem:Item):
+func add_to_Inventory(newItem:Item,ignoreRecreateForWeapon=false):
+	if (newItem is WeaponItem):
+		if (!ignoreRecreateForWeapon):
+			while(Inventory.has(newItem.instanceID)):
+				newItem.generate_random_ID();
+		Inventory.get_or_add(newItem.instanceID,newItem);
+		return;
 	if (newItem.stackable):
 		var added:bool = false;
 		var itemID=newItem.ID;

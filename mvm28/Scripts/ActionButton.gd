@@ -15,3 +15,5 @@ func inputConvert():
 			return "TriggerLeft";
 		_:
 			return "TriggerRight";
+func set_item(item:Item):
+	currentItem=item;

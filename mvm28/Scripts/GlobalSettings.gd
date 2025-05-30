@@ -69,10 +69,13 @@ func load_save_file(file:int):
 			var invenDict=contents.get("Inventory");
 			for i in invenDict:
 				var itemDict = invenDict.get(i);
-				var newItem = Item.new();
+				var newItem;
+				if (itemDict.get("itemType")==Item.ITEMTYPES.WEAPON):
+					newItem=WeaponItem.new();
+				else:
+					newItem=Item.new();
 				newItem.populateFromDict(itemDict);
-				print(newItem.name);
-				Globals.add_to_Inventory(newItem);
+				Globals.add_to_Inventory(newItem,true);
 		if (contents.has("Scene")):
 			loadGameScene(contents.get("Scene"));
 func get_first_available_slot():

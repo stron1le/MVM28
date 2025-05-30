@@ -24,3 +24,9 @@ func convertToDictionary(removeRecreateId:bool=false):
 	weaponDict.get_or_add("weaponID",weaponID);
 	weaponDict.get_or_add("weaponScene",weaponScene.resource_path);
 	return weaponDict;
+func populateFromDict(ItemDict):
+	super.populateFromDict(ItemDict);
+	if (ItemDict.has("weaponID")):
+		weaponID=ItemDict.get("weaponID");
+	if (ItemDict.has("weaponScene")):
+		weaponScene=load(ItemDict.get("weaponScene"));

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6c4qedbwxmug"]
+
+[ext_resource type="Script" uid="uid://dcjw6aithmtu4" path="res://Scenes/inventory_item_slot.gd" id="1_icju2"]
+
+[sub_resource type="Gradient" id="Gradient_we4u5"]
+offsets = PackedFloat32Array(0, 0.038961, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icju2"]
+gradient = SubResource("Gradient_we4u5")
+fill_from = Vector2(0.229358, 0.908257)
+
+[node name="InventoryItemSlot" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("GradientTexture2D_icju2")
+script = ExtResource("1_icju2")
+
+[node name="IconHolder" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 9.0
+offset_right = 50.0
+offset_bottom = 49.0
+expand_mode = 1
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
