@@ -1,15 +1,18 @@
-[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://bp7erkld56ngj"]
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://bp7erkld56ngj"]
 
 [ext_resource type="Script" uid="uid://c7kje653kde45" path="res://Scripts/Item.gd" id="1_pqnhc"]
+[ext_resource type="Texture2D" uid="uid://bpswnkeocihea" path="res://PNGs/GreatswordImage.png" id="1_ysk36"]
 
 [resource]
 script = ExtResource("1_pqnhc")
 ID = 1
+instanceID = 0
 name = "TestPoison"
 stackable = true
 duplicatesAllowed = true
 itemType = 2
 itemUseType = 1
 quantity = 1
-recreateID = true
+recreateID = false
+icon = ExtResource("1_ysk36")
 metadata/_custom_type_script = "uid://c7kje653kde45"

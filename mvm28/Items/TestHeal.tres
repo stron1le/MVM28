@@ -1,10 +1,12 @@
-[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://bhfmj7svhbnt2"]
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://bhfmj7svhbnt2"]
 
+[ext_resource type="Texture2D" uid="uid://b18xrfmft820e" path="res://PNGs/HammerImage.png" id="1_ug2re"]
 [ext_resource type="Script" uid="uid://c7kje653kde45" path="res://Scripts/Item.gd" id="1_x7xic"]
 
 [resource]
 script = ExtResource("1_x7xic")
 ID = 0
+instanceID = 0
 name = "Potion"
 stackable = true
 duplicatesAllowed = true
@@ -12,4 +14,5 @@ itemType = 2
 itemUseType = 0
 quantity = 1
 recreateID = false
+icon = ExtResource("1_ug2re")
 metadata/_custom_type_script = "uid://c7kje653kde45"

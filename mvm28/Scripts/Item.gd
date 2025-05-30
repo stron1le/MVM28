@@ -9,6 +9,9 @@ class_name Item;
 @export var itemUseType:ITEMUSEEFFECT
 @export var quantity:int=1;
 @export var recreateID:bool = false;
+@export var icon:CompressedTexture2D=load("res://PNGs/GreatswordImage.png");
+static var IDIconLibrary={};
+	
 enum ITEMUSEEFFECT {HEAL1,DAMAGE1}
 enum ITEMTYPES {KEY,KEYUSABLE,CONSUMABLE,WEAPON,VISAGE};
 func generate_random_ID():
@@ -56,3 +59,9 @@ func populateFromDict(ItemDict):
 		quantity=ItemDict.get("quantity");
 	if (ItemDict.has("recreateID")):
 		recreateID=ItemDict.get("recreateID");
+	icon=load(getIconByID());
+func getIconByID():
+	match(ID):
+		_:
+			print("No icon found for "+str(ID));
+			return "res://PNGs/GreatswordImage.png";
