@@ -41,6 +41,7 @@ func collectSaveContents():
 	saveDictionary.set("playerPosition",Globals.playerPosition);
 	print(get_tree().current_scene.name);
 	saveDictionary.set("Scene",get_tree().current_scene.name)
+	saveDictionary.set("Inventory",Globals.getInventoryDictionary());
 	return saveDictionary;
 func DeJSON(jsonstring):
 	var json=JSON.new();
@@ -58,9 +59,20 @@ func store_global_settings():
 func load_save_file(file:int):
 	if (save_exists(file)):
 		var jsoncontents = FileAccess.open("user://Save"+str(file)+".txt",FileAccess.READ).get_as_text();
+		if (jsoncontents==""):
+			jsoncontents="{}";
 		var contents=JSON.parse_string(jsoncontents) as Dictionary;
 		if (contents.has("playerPosition")):
 			Globals.playerPosition=contents.get("playerPosition");
+		if (contents.has("Inventory")):
+			print(contents.get("Inventory"));
+			var invenDict=contents.get("Inventory");
+			for i in invenDict:
+				var itemDict = invenDict.get(i);
+				var newItem = Item.new();
+				newItem.populateFromDict(itemDict);
+				print(newItem.name);
+				Globals.add_to_Inventory(newItem);
 		if (contents.has("Scene")):
 			loadGameScene(contents.get("Scene"));
 func get_first_available_slot():

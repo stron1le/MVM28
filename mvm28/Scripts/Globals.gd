@@ -9,6 +9,7 @@ var paused=false;
 var playerPosition = -1;
 var gameMode=GAME_MODE_ACTION;
 var spawnLocations={};
+var Inventory = {};
 
 func get_terrain(terrain_name:String):
 	match(terrain_name):
@@ -16,3 +17,31 @@ func get_terrain(terrain_name:String):
 			return STANDARD_TERRAIN;
 		"SLIPPERY_TERRAIN":
 			return SLIPPERY_TERRAIN;
+func getInventoryDictionary():
+	var newDict = {};
+	for k in Inventory.keys():
+		var itemToString=Inventory.get(k);
+		newDict.get_or_add(k,itemToString.convertToDictionary());
+	return newDict;
+func add_to_Inventory(newItem:Item):
+	if (newItem.stackable):
+		var added:bool = false;
+		var itemID=newItem.ID;
+		for i in Inventory:
+			if itemID==Inventory.get(i).ID and !added:
+				Inventory.get(i).quantity+=newItem.quantity;
+				added=true;
+		if (added):
+			return;
+		else:
+			if (newItem.recreateID):
+				while(Inventory.has(newItem.instanceID)):
+					newItem.generate_random_ID();
+			Inventory.get_or_add(newItem.instanceID,newItem);
+			return;
+	if (newItem.recreateID):
+		while (Inventory.has(newItem.instanceID)):
+			newItem.generate_random_ID();
+	Inventory.get_or_add(newItem.instanceID,newItem);
+func _ready():
+	pass;

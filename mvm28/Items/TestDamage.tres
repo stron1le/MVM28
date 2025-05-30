@@ -6,7 +6,10 @@
 script = ExtResource("1_pqnhc")
 ID = 1
 name = "TestPoison"
+stackable = true
 duplicatesAllowed = true
 itemType = 2
 itemUseType = 1
+quantity = 1
+recreateID = true
 metadata/_custom_type_script = "uid://c7kje653kde45"

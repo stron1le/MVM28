@@ -6,7 +6,10 @@
 script = ExtResource("1_x7xic")
 ID = 0
 name = "Potion"
+stackable = true
 duplicatesAllowed = true
 itemType = 2
 itemUseType = 0
+quantity = 1
+recreateID = false
 metadata/_custom_type_script = "uid://c7kje653kde45"

@@ -29,6 +29,7 @@ var maxHP=30;
 var HP=30;
 signal HPAdjust;
 static var singleton;
+@export var rightHand:Node3D;
 func _ready():
 	singleton=self;
 func HPChanged(amount):
@@ -175,6 +176,13 @@ func enter_greatsword_check():
 		currentState=PLAYERSTATE.ACT_GREATSWORD_WALK
 func get_camera_yaw():
 	return deg_to_rad(get_viewport().get_camera_3d().global_rotation_degrees.y);
+func get_weapon_item():
+	if (rightHand and rightHand.get_child_count()!=0):
+		return (rightHand.get_child(0) as EquippableWeapon).referenceItem;
+func unequip():
+	if (rightHand and rightHand.get_child_count()!=0):
+		var weap = rightHand.get_child(0);
+		weap.queue_free();
 func coyoteTimerSteps():
 	if (is_on_floor()):
 		coyote_timer=-1;
