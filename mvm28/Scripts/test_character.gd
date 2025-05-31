@@ -165,7 +165,7 @@ func act_greatsword_swing(delta):
 	swingAftermathTimer=move_toward(swingAftermathTimer,0,delta);
 	if (swingAftermathTimer<=0):
 		if (forwardVel==0):
-			currentState==PLAYERSTATE.ACT_WALKING
+			currentState=PLAYERSTATE.ACT_WALKING
 		else:
 			currentState=PLAYERSTATE.ACT_STANDING;
 	move_and_slide();
