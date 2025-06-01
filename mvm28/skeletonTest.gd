@@ -4,7 +4,7 @@ var holder;
 @export var weapon:Node3D;
 func _ready():
 	await get_tree().process_frame;
-	var skel = $SecondTestCharacter/Armature/Skeleton3D;
+	var skel = $ThirdTestCharacter/Armature/Skeleton3D;
 	print(skel);
 	var hand = skel.find_bone("Hand.R");
 	print(skel.get_bone_pose(hand));

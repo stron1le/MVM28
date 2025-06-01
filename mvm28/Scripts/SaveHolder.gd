@@ -2,14 +2,19 @@ extends Button
 @export var saveId=0;
 var shouldActivate=false;
 func _ready():
-	if (GlobalSettings.save_exists(saveId)):
-		shouldActivate=true;
-		text="CanClick"
-	else:
-		shouldActivate=false;
-		text="CannotClick"
-
+	checkClickable()
 
 func _on_button_down():
-	if (shouldActivate):
-		GlobalSettings.load_save_file(saveId)
+	GlobalSettings.load_save_file(saveId)
+func checkClickable():
+	if (GlobalSettings.save_exists(saveId)):
+		text="Save "+str(saveId);
+		disabled=false;
+	else:
+		text="No save";
+		disabled=true;
+func _process(delta):
+	if (has_focus() and Input.is_action_just_pressed("Attack")):
+		if (GlobalSettings.save_exists(saveId)):
+			GlobalSettings.delete_save(saveId);
+			checkClickable();

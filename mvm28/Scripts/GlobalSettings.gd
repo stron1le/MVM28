@@ -28,6 +28,10 @@ func parseSettingInfo(settingsContent):
 				pass;
 func save_exists(file:int):
 	return FileAccess.file_exists("user://Save"+str(file)+".txt");
+func delete_save(file:int):
+	var path = "user://Save"+str(file)+".txt"
+	if save_exists(file):
+		DirAccess.remove_absolute(path)
 func save():
 	var filePath="user://Save"+str(currentGame)+".txt";
 	var saveFile=FileAccess.open(filePath,FileAccess.WRITE);
