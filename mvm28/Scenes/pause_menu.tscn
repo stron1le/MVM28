@@ -31,8 +31,10 @@ DescLabel = NodePath("../Label2")
 
 [node name="Selector" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 64.0
-offset_bottom = 64.0
+offset_left = -236.0
+offset_top = 72.0
+offset_right = -172.0
+offset_bottom = 136.0
 texture = ExtResource("3_1och7")
 expand_mode = 1
 

@@ -10,6 +10,8 @@ func _ready():
 func _physics_process(delta):
 	if (target!=null):
 		global_position=target.global_position+Vector3.UP;
+	if (Globals.paused):
+		return;
 	var cam_input = Input.get_vector("TurnCameraLeftController","TurnCameraRightController","TurnCameraDownController","TurnCameraUpController");
 	if (cam_input!=Vector2.ZERO):
 		var cam_target_angle=CAMERA_TURN_SPEED*cam_input.x*delta

@@ -1,4 +1,4 @@
-class_name InventoryItemSlot extends TextureRect
+class_name InventoryItemSlot extends TextureButton
 var itemToShow:Item;
 var highlighted:bool=false;
 signal was_highlighted(slot);
@@ -14,5 +14,10 @@ func process():
 
 func _on_mouse_entered():
 	emit_signal("was_highlighted",self);
-	print("hovered over "+str(itemToShow.instanceID));
+	grab_focus();
+	pass # Replace with function body.
+
+
+func _on_focus_entered():
+	emit_signal("was_highlighted",self);
 	pass # Replace with function body.
