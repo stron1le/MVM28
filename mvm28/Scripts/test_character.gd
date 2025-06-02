@@ -172,6 +172,7 @@ func act_greatsword_swing(delta):
 func get_state_name():
 	return PLAYERSTATE.keys()[currentState]
 func enter_greatsword_check():
+	return;
 	if (Input.is_action_just_pressed("BButtonCharge")):
 		currentState=PLAYERSTATE.ACT_GREATSWORD_WALK
 func get_camera_yaw():

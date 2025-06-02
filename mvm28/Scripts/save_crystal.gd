@@ -15,7 +15,6 @@ func _ready():
 		newCam.target=newPlay;
 		newCam.make_current();
 		Globals.playerPosition=id;
-		testing_code_delete_later(newPlay)
 func _on_body_entered(body):
 	if (body.is_in_group("Player")):
 		interacting=true;

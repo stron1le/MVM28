@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddfaeome8lgwj"]
+
+[ext_resource type="Script" uid="uid://dvtq3onjga84" path="res://Scripts/LockOnTarget.gd" id="1_miejr"]
+
+[node name="LockOnTarget" type="Node3D"]
+script = ExtResource("1_miejr")
+
+[node name="VisibleOnScreenNotifier3D" type="VisibleOnScreenNotifier3D" parent="."]
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="."]
+radius = 0.20224
+
+[connection signal="screen_entered" from="VisibleOnScreenNotifier3D" to="." method="_on_visible_on_screen_notifier_3d_screen_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier3D" to="." method="_on_visible_on_screen_notifier_3d_screen_exited"]
