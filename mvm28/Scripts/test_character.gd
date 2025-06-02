@@ -1,6 +1,6 @@
 class_name PlayerCharacter extends CharacterBody3D
-const INITIAL_JUMP_SPEED=5;
-const RUNNING_JUMP_MULTIPLIER=0.8;
+const INITIAL_JUMP_SPEED=10;
+const RUNNING_JUMP_MULTIPLIER=0.0;
 const MAX_RUN_SPEED=10;
 const MAX_GREATSWORD_WALK_SPEED=3;
 const RUN_ACCELERATION=20;

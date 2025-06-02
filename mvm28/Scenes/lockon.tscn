@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ciox6b4f4bg23"]
+
+[ext_resource type="Script" uid="uid://pdrgqdfcdq1a" path="res://Scripts/LockonTester.gd" id="1_xmlpk"]
+
+[node name="Lockon" type="Node3D"]
+script = ExtResource("1_xmlpk")
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="."]

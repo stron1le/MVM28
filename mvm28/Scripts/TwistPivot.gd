@@ -3,6 +3,7 @@ extends Node3D
 @export var displacer:Node3D;
 @export var maxDisplacement=2;
 @export var cam:Camera3D;
+var lockedOn:bool=true;
 const CAMERA_TURN_SPEED=deg_to_rad(180);
 var mouseHidden:bool=true;
 func _ready():
@@ -12,6 +13,15 @@ func _physics_process(delta):
 		global_position=target.global_position+Vector3.UP;
 	if (Globals.paused):
 		return;
+	if (!LockOn.availableLockOns.is_empty()):
+		moveCameraRelative(delta);
+		var lookLocation=LockOn.availableLockOns.get(0).global_position;
+		lookLocation.y=global_position.y;
+		look_at(lookLocation,Vector3.UP);
+		cam.look_at(LockOn.availableLockOns.get(0).target1.global_position);
+		return;
+	else:
+		cam.look_at(global_position);
 	var cam_input = Input.get_vector("TurnCameraLeftController","TurnCameraRightController","TurnCameraDownController","TurnCameraUpController");
 	if (cam_input!=Vector2.ZERO):
 		var cam_target_angle=CAMERA_TURN_SPEED*cam_input.x*delta
@@ -21,7 +31,7 @@ func _physics_process(delta):
 		$PitchPivot.rotation_degrees.x=clamp($PitchPivot.rotation_degrees.x,-60,60);
 	moveCameraRelative(delta);
 func _unhandled_input(event):
-	if ((event is InputEventMouseMotion) and mouseHidden):
+	if ((event is InputEventMouseMotion) and !Globals.paused and !lockedOn):
 		rotation_degrees.y-=event.relative.x*0.5;
 		$PitchPivot.rotation_degrees.x-=event.relative.y*0.2;
 		$PitchPivot.rotation_degrees.x=clamp($PitchPivot.rotation_degrees.x,-60,60);
@@ -29,6 +39,8 @@ func _unhandled_input(event):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if mouseHidden else Input.MOUSE_MODE_CAPTURED);
 		mouseHidden=!mouseHidden;
 func moveCameraRelative(delta):
+	if (target is PlayerCharacter and target.currentState==PlayerCharacter.PLAYERSTATE.ACT_JUMP):
+		return;
 	if ("velocity" in target):
 		displacer.global_position=$PitchPivot.global_position+target.velocity.normalized()*maxDisplacement;
 		var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");

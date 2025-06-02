@@ -15,6 +15,7 @@ func _ready():
 		newCam.target=newPlay;
 		newCam.make_current();
 		Globals.playerPosition=id;
+		testing_code_delete_later(newPlay)
 func _on_body_entered(body):
 	if (body.is_in_group("Player")):
 		interacting=true;
@@ -32,3 +33,10 @@ func _on_body_exited(body):
 	if (body.is_in_group("Player")):
 		interacting=false;
 	pass # Replace with function body.
+func testing_code_delete_later(char):
+	var lockOn:PackedScene=load("res://Scenes/lockon.tscn");
+	var newLock = lockOn.instantiate();
+	get_tree().root.add_child(newLock);
+	newLock.global_position=global_position;
+	newLock.target1=self;
+	newLock.target2=char;

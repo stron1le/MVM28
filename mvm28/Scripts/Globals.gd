@@ -12,8 +12,10 @@ var spawnLocations={};
 var Inventory = {};
 func _process(delta):
 	if (Input.is_action_just_pressed("TriggerRight") and !paused):
-		var x = load("res://Items/WeaponItem/DefaultWeapon.tres").duplicate();
-		add_to_Inventory(x);
+		add_test_weapon();
+func add_test_weapon():
+	var x = load("res://Items/WeaponItem/DefaultWeapon.tres").duplicate();
+	add_to_Inventory(x);
 func get_terrain(terrain_name:String):
 	match(terrain_name):
 		"STANDARD_TERRAIN":

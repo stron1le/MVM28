@@ -90,7 +90,7 @@ mappedButton = 2
 transform = Transform3D(-0.2, 0, -1.74846e-08, 0, 0.2, 0, 1.74846e-08, 0, -0.2, 0, 0, 0)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="ThirdTestCharacter/Armature/Skeleton3D" index="1"]
-transform = Transform3D(-5, 0, 4.37114e-07, 0, 5, 0, -4.37114e-07, 0, -5, 0, -7.03894, 0)
+transform = Transform3D(-0.995788, -1.56229e-07, 0.0916902, 1.18632e-07, -1, -1.85197e-08, 0.0916902, 1.11759e-08, 0.995788, 1.57791, -3.58239, -0.072492)
 bone_name = "Hand.R"
 bone_idx = 10
 
