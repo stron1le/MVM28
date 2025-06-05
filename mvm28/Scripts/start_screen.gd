@@ -49,6 +49,6 @@ func openMainMenu():
 	$FileSelectMenu.visible=false;
 	fileSelectButton.grab_focus();
 func _process(delta):
-	if (Input.is_action_just_pressed("BButtonCharge")):
+	if (Input.is_action_just_pressed("ui_cancel")):
 		if (!$MainStart.visible):
 			openMainMenu();

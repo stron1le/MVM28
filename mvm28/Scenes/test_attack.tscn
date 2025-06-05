@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://3fwhfs8mvtgy"]
+
+[ext_resource type="Script" uid="uid://dm28ilgrmr3o" path="res://Scripts/test_attack.gd" id="1_o2nol"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_424uh"]
+radius = 2.5
+
+[node name="TestAttack" type="Area3D"]
+collision_mask = 3
+script = ExtResource("1_o2nol")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.016449)
+shape = SubResource("CylinderShape3D_424uh")
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+radius = 2.5
+sides = 16
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="hitObject" from="." to="." method="_on_hit_object"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

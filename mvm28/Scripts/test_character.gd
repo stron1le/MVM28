@@ -16,7 +16,7 @@ const STANDARD_DRAG=0.35;
 const STRAIN_FORWARD_FACTOR=1.5;
 const DRAG_EXCESS_FORWARD_FACTOR=1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR=2.0;
-enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST}
+enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_LEDGE_GRAB}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
 @export var forwardVel:float=0;
@@ -28,7 +28,12 @@ var canCutJump:bool=false;
 var maxHP=30;
 var HP=30;
 signal HPAdjust;
+signal actionItemChange;
 static var singleton;
+var ActionItem1:Item;
+var ActionItem2:Item;
+var ActionItem3:Item;
+var ActionItem4:Item;
 @export var rightHand:Node3D;
 func _ready():
 	singleton=self;
@@ -40,6 +45,8 @@ func _process(delta):
 	if (Input.is_action_just_pressed("Pause")):
 		Globals.paused=!Globals.paused;
 		$PauseMenu.visible=!$PauseMenu.visible;
+	if (Input.is_action_just_pressed("Attack")):
+		makeAttack();
 func _physics_process(delta):
 	if (Globals.paused):
 		return;
@@ -116,6 +123,7 @@ func act_braking(delta):
 	if (forwardVel==0):
 		currentState = PLAYERSTATE.ACT_STANDING;
 	check_common_exits();
+
 func check_common_exits():
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var intendedMagnitude=movementVector.length();
@@ -245,3 +253,8 @@ func act_test_jump_momentum(delta):
 func get_debug_properties():
 	var propertiesDict={"ForwardVel":func():return forwardVel,"Velocity":func():return velocity, "Current State":func():return get_state_name(),"ForwardVel2":func():return forwardVel,"ForwardVel3":func():return forwardVel,"ForwardVel4":func():return forwardVel,"ForwardVel5":func():return forwardVel,"ForwardVel6":func():return forwardVel,"ForwardVel7":func():return forwardVel,"ForwardVel8":func():return forwardVel,"ForwardVel9":func():return forwardVel}
 	return propertiesDict;
+func makeAttack():
+	var newAttackScene = load("res://Scenes/test_attack.tscn") as PackedScene;
+	var newAttack=newAttackScene.instantiate();
+	get_tree().root.add_child(newAttack);
+	newAttack.global_position=global_position+0.5*$CollisionShape3D.shape.height*transform.basis.y;
