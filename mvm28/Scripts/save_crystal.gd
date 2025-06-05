@@ -1,9 +1,11 @@
 extends Area3D
 var interacting=false;
+var currentScale=0.5;
+const scaleTime=0.5;
 @export var id=0
 @export var playerCharacter:PackedScene;
 @export var camera:PackedScene;
-
+@export var growShrinkCurve:Curve;
 func _ready():
 	await get_tree().physics_frame
 	if (id==Globals.playerPosition or Globals.playerPosition==-1):
@@ -26,7 +28,11 @@ func _process(delta):
 		#Globals.playerPosition=id;
 		#print('crystal hit'+str(id));
 		#GlobalSettings.save();
-
+func _physics_process(delta):
+	if (currentScale<scaleTime):
+		currentScale+=delta;
+		print(currentScale);
+		$CSGBox3D.scale=growShrinkCurve.sample(currentScale/scaleTime)*Vector3(1,1,1);
 
 func _on_body_exited(body):
 	if (body.is_in_group("Player")):
@@ -46,4 +52,5 @@ func _on_area_entered(area):
 		Globals.playerPosition=id;
 		print('crystal hit'+str(id));
 		GlobalSettings.save();
+		currentScale=0;
 	pass # Replace with function body.
