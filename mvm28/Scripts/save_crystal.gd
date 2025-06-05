@@ -22,10 +22,10 @@ func _on_body_entered(body):
 func _process(delta):
 	if (!interacting):
 		return;
-	if (Input.is_action_just_pressed("Attack")):
-		Globals.playerPosition=id;
-		print('crystal hit'+str(id));
-		GlobalSettings.save();
+	#if (Input.is_action_just_pressed("Attack")):
+		#Globals.playerPosition=id;
+		#print('crystal hit'+str(id));
+		#GlobalSettings.save();
 
 
 func _on_body_exited(body):
@@ -39,3 +39,11 @@ func testing_code_delete_later(char):
 	newLock.global_position=global_position;
 	newLock.target1=self;
 	newLock.target2=char;
+
+
+func _on_area_entered(area):
+	if (area.is_in_group("canActivateSave")):
+		Globals.playerPosition=id;
+		print('crystal hit'+str(id));
+		GlobalSettings.save();
+	pass # Replace with function body.

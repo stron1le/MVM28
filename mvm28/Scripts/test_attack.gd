@@ -6,7 +6,7 @@ func _process(delta):
 	else:
 		$Timer.paused=false;
 func _on_body_entered(body):
-	var x = body as Node3D;;
+	var x = body as Node3D;
 	if (x.is_in_group("Enemy")):
 		emit_signal("hitObject",body);
 		print("enteredbody");

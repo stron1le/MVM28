@@ -16,16 +16,19 @@ playerCharacter = ExtResource("2_ri7ci")
 camera = ExtResource("3_ght8y")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(0.46455, 0.634244, -0.618003, -0.503145, 0.763331, 0.40518, 0.728724, 0.122718, 0.673722, 0, 0, 0)
+transform = Transform3D(0.46455, 0.634244, -0.618003, -0.503145, 0.763331, 0.40518, 0.728724, 0.122718, 0.673722, 0, 1.16753, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CylinderShape3D_jl238")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("CylinderShape3D_dx0k3")
 
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

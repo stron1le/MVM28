@@ -29,6 +29,10 @@ folder_colors={
 "res://Scenes/": "yellow"
 }
 
+[global_group]
+
+canActivateSave="Can this attack activate save crystals?"
+
 [input]
 
 ui_accept={
