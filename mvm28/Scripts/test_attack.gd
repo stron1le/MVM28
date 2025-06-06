@@ -13,7 +13,6 @@ func _on_body_entered(body):
 		
 	pass # Replace with function body.
 
-
 func _on_hit_object(body):
 	if (PlayerCharacter.singleton.currentState==PlayerCharacter.PLAYERSTATE.ACT_JUMP):
 		PlayerCharacter.singleton.velocity.y=8;

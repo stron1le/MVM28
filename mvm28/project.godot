@@ -24,6 +24,7 @@ GlobalSettings="*res://Scripts/GlobalSettings.gd"
 
 folder_colors={
 "res://Items/": "green",
+"res://Materials/": "orange",
 "res://Models/": "red",
 "res://PNGs/": "pink",
 "res://Scenes/": "yellow"

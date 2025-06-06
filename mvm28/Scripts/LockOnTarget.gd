@@ -10,8 +10,9 @@ func _ready():
 	if ($VisibleOnScreenNotifier3D.is_on_screen()):
 		onScreen=true;
 func _process(delta):
-	inRange=((global_position-PlayerCharacter.singleton.global_position).length()<MAX_LOCKON_RANGE);
-	isAvailable();
+	if (PlayerCharacter.singleton):
+		inRange=((global_position-PlayerCharacter.singleton.global_position).length()<MAX_LOCKON_RANGE);
+		isAvailable();
 func _on_visible_on_screen_notifier_3d_screen_entered():
 	onScreen=true;
 	isAvailable();
