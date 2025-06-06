@@ -47,6 +47,14 @@ func collectSaveContents():
 	saveDictionary.set("Scene",get_tree().current_scene.name)
 	saveDictionary.set("Inventory",Globals.getInventoryDictionary());
 	saveDictionary.set("openedChests",Globals.openedChests);
+	if (PlayerCharacter.ActionItem1):
+		saveDictionary.set("ActionItem1",PlayerCharacter.ActionItem1.instanceID)
+	if (PlayerCharacter.ActionItem2):
+		saveDictionary.set("ActionItem2",PlayerCharacter.ActionItem2.instanceID)
+	if (PlayerCharacter.ActionItem3):
+		saveDictionary.set("ActionItem3",PlayerCharacter.ActionItem3.instanceID)
+	if (PlayerCharacter.ActionItem4):
+		saveDictionary.set("ActionItem4",PlayerCharacter.ActionItem4.instanceID)
 	return saveDictionary;
 func DeJSON(jsonstring):
 	var json=JSON.new();
@@ -81,6 +89,22 @@ func load_save_file(file:int):
 					newItem=Item.new();
 				newItem.populateFromDict(itemDict);
 				Globals.add_to_Inventory(newItem,true);
+		if (contents.has("ActionItem1")):
+			var itemID=contents.get("ActionItem1") as int;
+			if itemID in Globals.Inventory.keys():
+				PlayerCharacter.ActionItem1=Globals.Inventory.get(itemID);
+		if (contents.has("ActionItem2")):
+			var itemID=contents.get("ActionItem2") as int;
+			if itemID in Globals.Inventory.keys():
+				PlayerCharacter.ActionItem2=Globals.Inventory.get(itemID);
+		if (contents.has("ActionItem3")):
+			var itemID=contents.get("ActionItem3") as int;
+			if itemID in Globals.Inventory.keys():
+				PlayerCharacter.ActionItem3=Globals.Inventory.get(itemID);
+		if (contents.has("ActionItem4")):
+			var itemID=contents.get("ActionItem4") as int;
+			if itemID in Globals.Inventory.keys():
+				PlayerCharacter.ActionItem4=Globals.Inventory.get(itemID);
 		if (contents.has("openedChests")):
 			var openedChests=contents.get("openedChests");
 			for i in openedChests:

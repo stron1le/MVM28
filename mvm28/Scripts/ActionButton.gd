@@ -24,11 +24,11 @@ func set_item(item:Item):
 func updateContents():
 	match(mappedButton):
 		BUTTONACKNOWLEDGEMENT.SHOULDERLEFT:
-			set_item(PlayerCharacter.singleton.ActionItem1);
+			set_item(PlayerCharacter.ActionItem1);
 		BUTTONACKNOWLEDGEMENT.SHOULDERRIGHT:
-			set_item(PlayerCharacter.singleton.ActionItem2);
+			set_item(PlayerCharacter.ActionItem2);
 		BUTTONACKNOWLEDGEMENT.TRIGGERLEFT:
-			set_item(PlayerCharacter.singleton.ActionItem3);
+			set_item(PlayerCharacter.ActionItem3);
 		_:
-			set_item(PlayerCharacter.singleton.ActionItem4);
+			set_item(PlayerCharacter.ActionItem4);
 	if (currentItem): $IconTexture.texture=currentItem.icon;

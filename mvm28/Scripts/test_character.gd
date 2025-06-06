@@ -30,10 +30,10 @@ var HP=30;
 signal HPAdjust;
 signal actionItemChange;
 static var singleton;
-var ActionItem1:Item;
-var ActionItem2:Item;
-var ActionItem3:Item;
-var ActionItem4:Item;
+static var ActionItem1:Item;
+static var ActionItem2:Item;
+static var ActionItem3:Item;
+static var ActionItem4:Item;
 @export var rightHand:Node3D;
 func _ready():
 	singleton=self;
