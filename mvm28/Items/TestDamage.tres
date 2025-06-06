@@ -13,6 +13,6 @@ duplicatesAllowed = true
 itemType = 2
 itemUseType = 1
 quantity = 1
-recreateID = false
+recreateID = true
 icon = ExtResource("1_ysk36")
 metadata/_custom_type_script = "uid://c7kje653kde45"

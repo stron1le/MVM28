@@ -8,7 +8,7 @@
 script = ExtResource("1_q14lo")
 weaponID = 0
 weaponScene = ExtResource("2_soqtd")
-ID = 0
+ID = 3
 instanceID = 0
 name = ""
 stackable = false

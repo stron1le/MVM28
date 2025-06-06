@@ -10,6 +10,7 @@ var playerPosition = -1;
 var gameMode=GAME_MODE_ACTION;
 var spawnLocations={};
 var Inventory = {};
+var openedChests=[];
 func _process(delta):
 	if (Input.is_action_just_pressed("TriggerRight") and !paused):
 		add_test_weapon();

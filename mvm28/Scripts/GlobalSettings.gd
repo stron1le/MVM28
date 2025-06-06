@@ -46,6 +46,7 @@ func collectSaveContents():
 	print(get_tree().current_scene.name);
 	saveDictionary.set("Scene",get_tree().current_scene.name)
 	saveDictionary.set("Inventory",Globals.getInventoryDictionary());
+	saveDictionary.set("openedChests",Globals.openedChests);
 	return saveDictionary;
 func DeJSON(jsonstring):
 	var json=JSON.new();
@@ -80,6 +81,10 @@ func load_save_file(file:int):
 					newItem=Item.new();
 				newItem.populateFromDict(itemDict);
 				Globals.add_to_Inventory(newItem,true);
+		if (contents.has("openedChests")):
+			var openedChests=contents.get("openedChests");
+			for i in openedChests:
+				Globals.openedChests.append(i as int);
 		if (contents.has("Scene")):
 			loadGameScene(contents.get("Scene"));
 func get_first_available_slot():

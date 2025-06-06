@@ -62,6 +62,10 @@ func populateFromDict(ItemDict):
 	icon=load(getIconByID());
 func getIconByID():
 	match(ID):
+		0:
+			return "res://PNGs/PotionImage.png"
+		1:
+			return "res://PNGs/PoisonImage.png"
 		_:
 			print("No icon found for "+str(ID));
 			return "res://PNGs/GreatswordImage.png";
