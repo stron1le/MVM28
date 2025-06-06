@@ -14,6 +14,8 @@ func checkClickable():
 		text="No save";
 		disabled=true;
 func _process(delta):
+	if (is_hovered()):
+		grab_focus();
 	if (has_focus() and Input.is_action_just_pressed("FileDelete")):
 		if (GlobalSettings.save_exists(saveId)):
 			GlobalSettings.delete_save(saveId);

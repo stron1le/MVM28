@@ -84,7 +84,7 @@ func load_save_file(file:int):
 			loadGameScene(contents.get("Scene"));
 func get_first_available_slot():
 	var foundSlot=-1;
-	for i in range(20):
+	for i in range(6):
 		if (!save_exists(i)):
 			foundSlot=i;
 			break;

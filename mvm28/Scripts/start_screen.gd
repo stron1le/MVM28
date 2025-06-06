@@ -15,6 +15,7 @@ func _ready():
 		continueButton.grab_focus();
 	else:
 		startButton.grab_focus();
+
 func continueCurrentGame():
 	if (GlobalSettings.continueGame):
 		GlobalSettings.load_save_file(GlobalSettings.currentGame);
@@ -52,3 +53,5 @@ func _process(delta):
 	if (Input.is_action_just_pressed("ui_cancel")):
 		if (!$MainStart.visible):
 			openMainMenu();
+	if (GlobalSettings.get_first_available_slot()==-1):
+		startButton.disabled=true; 
