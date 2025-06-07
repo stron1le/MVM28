@@ -17,6 +17,7 @@ const STANDARD_DRAG=0.35;
 const STRAIN_FORWARD_FACTOR=1.5;
 const DRAG_EXCESS_FORWARD_FACTOR=1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR=2.0;
+const DASH_SPEED=15;
 enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_DASHING}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
@@ -191,12 +192,10 @@ func act_dashing(delta):
 		targetAngle=min(MAX_DASH_TURN_SPEED*delta,abs(targetAngle))*sign(targetAngle);
 		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 		prevAngle=targetAngle;
-	forwardVel=15;
+	forwardVel=DASH_SPEED;
 	velocity=transform.basis.z*forwardVel;
 	move_and_slide();
-	if (!is_on_floor()):
-		currentState=PLAYERSTATE.ACT_JUMP;
-		dashTimer.stop();
+	coyoteTimerSteps();
 	if (Input.is_action_just_pressed("Jump")):
 		currentState=PLAYERSTATE.ACT_JUMP;
 		velocity.y=INITIAL_JUMP_SPEED;
@@ -227,6 +226,7 @@ func coyoteTimerSteps():
 		coyote_timer-=1;
 		if (coyote_timer==0):
 			currentState=PLAYERSTATE.ACT_JUMP;
+			dashTimer.stop();
 func aerialAdjustment(delta):
 	var dragThreshold
 	var intendedYawDiff;
@@ -284,8 +284,6 @@ func makeAttack():
 	var newAttack=newAttackScene.instantiate();
 	get_tree().root.add_child(newAttack);
 	newAttack.global_position=global_position+0.5*$CollisionShape3D.shape.height*transform.basis.y;
-
-
 func _on_dash_timer_timeout():
 	exit_dash()
 	pass # Replace with function body.

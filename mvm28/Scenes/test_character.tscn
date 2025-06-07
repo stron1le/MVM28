@@ -12,6 +12,8 @@
 
 [node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand") groups=["DestroyOnLoad", "Player"]]
 collision_mask = 2
+floor_max_angle = 1.309
+floor_snap_length = 0.3
 script = ExtResource("1_fksbf")
 currentState = 1
 forwardVel = 7.0
