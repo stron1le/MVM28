@@ -120,7 +120,8 @@ func get_first_available_slot():
 	return foundSlot;
 func loadGameScene(scene):
 	sceneCheck(scene);
-	get_tree().change_scene_to_file("res://Scenes/"+scene+".tscn");
+	Globals.currentLevel=scene;
+	Globals.load_level();
 func sceneCheck(scene):
 	match(scene):
 		"test_room":

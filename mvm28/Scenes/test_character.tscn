@@ -10,11 +10,12 @@
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mii0h"]
 
-[node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("rightHand") groups=["Player"]]
+[node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand") groups=["DestroyOnLoad", "Player"]]
 collision_mask = 2
 script = ExtResource("1_fksbf")
 currentState = 1
 forwardVel = 7.0
+dashTimer = NodePath("DashTimer")
 rightHand = NodePath("ThirdTestCharacter/Armature/Skeleton3D/BoneAttachment3D/Hand")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -124,6 +125,10 @@ bone_idx = 10
 [node name="Hand" type="Node3D" parent="ThirdTestCharacter/Armature/Skeleton3D/BoneAttachment3D"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
+[node name="DashTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="HPAdjust" from="." to="HealthBar" method="_on_test_character_hp_adjust"]
+[connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
 
 [editable path="ThirdTestCharacter"]

@@ -6,7 +6,7 @@
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_424uh"]
 radius = 2.5
 
-[node name="TestAttack" type="Area3D" groups=["canActivateSave"]]
+[node name="TestAttack" type="Area3D" groups=["DestroyOnLoad", "canActivateSave"]]
 collision_mask = 3
 script = ExtResource("1_o2nol")
 

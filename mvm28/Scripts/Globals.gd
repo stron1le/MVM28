@@ -11,6 +11,7 @@ var gameMode=GAME_MODE_ACTION;
 var spawnLocations={};
 var Inventory = {};
 var openedChests=[];
+var currentLevel:String = "test_room"
 func _process(delta):
 	if (Input.is_action_just_pressed("TriggerRight") and !paused):
 		add_test_weapon();
@@ -57,3 +58,6 @@ func add_to_Inventory(newItem:Item,ignoreRecreateForWeapon=false):
 	Inventory.get_or_add(newItem.instanceID,newItem);
 func _ready():
 	pass;
+func load_level():
+	get_tree().call_group("DestroyOnLoad","queue_free");
+	get_tree().change_scene_to_file("res://Scenes/"+currentLevel+".tscn");

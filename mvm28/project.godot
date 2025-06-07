@@ -33,6 +33,7 @@ folder_colors={
 [global_group]
 
 canActivateSave="Can this attack activate save crystals?"
+DestroyOnLoad="Should this object be destroyed when a new scene is loaded"
 
 [input]
 

@@ -16,10 +16,11 @@ const STANDARD_DRAG=0.35;
 const STRAIN_FORWARD_FACTOR=1.5;
 const DRAG_EXCESS_FORWARD_FACTOR=1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR=2.0;
-enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_LEDGE_GRAB}
+enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_DASHING}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
 @export var forwardVel:float=0;
+@export var dashTimer:Timer;
 var swingAftermathTimer:float=0;
 var slideX=0;
 var slideZ=0;
@@ -65,6 +66,8 @@ func _physics_process(delta):
 			act_greatsword_swing(delta);
 		PLAYERSTATE.ACT_TEST:
 			act_test(delta);
+		PLAYERSTATE.ACT_DASHING:
+			act_dashing(delta);
 		_:
 			print("There is no such state "+str(currentState))
 			act_walking(delta);
@@ -177,6 +180,27 @@ func act_greatsword_swing(delta):
 		else:
 			currentState=PLAYERSTATE.ACT_STANDING;
 	move_and_slide();
+func act_dashing(delta):
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	if (movementVector!=Vector2.ZERO):
+		var forwardVec=transform.basis.z;
+		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
+		targetAngle=min(delta*MAX_TURN_SPEED,abs(targetAngle))*sign(targetAngle);
+		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
+		prevAngle=targetAngle;
+	forwardVel=15;
+	velocity=transform.basis.z*forwardVel;
+	move_and_slide();
+	if (!is_on_floor()):
+		currentState=PLAYERSTATE.ACT_JUMP;
+		dashTimer.stop();
+	if (Input.is_action_just_pressed("Jump")):
+		currentState=PLAYERSTATE.ACT_JUMP;
+		velocity.y=INITIAL_JUMP_SPEED;
+		dashTimer.stop();
+func exit_dash():
+	currentState=PLAYERSTATE.ACT_WALKING;
 func get_state_name():
 	return PLAYERSTATE.keys()[currentState]
 func enter_greatsword_check():
@@ -258,3 +282,10 @@ func makeAttack():
 	var newAttack=newAttackScene.instantiate();
 	get_tree().root.add_child(newAttack);
 	newAttack.global_position=global_position+0.5*$CollisionShape3D.shape.height*transform.basis.y;
+
+
+func _on_dash_timer_timeout():
+	exit_dash()
+	pass # Replace with function body.
+func _exit_tree():
+	print('destroyed');

@@ -12,7 +12,7 @@ class_name Item;
 @export var icon:CompressedTexture2D=load("res://PNGs/GreatswordImage.png");
 static var IDIconLibrary={};
 	
-enum ITEMUSEEFFECT {HEAL1,DAMAGE1}
+enum ITEMUSEEFFECT {HEAL1,DAMAGE1,DASH}
 enum ITEMTYPES {KEY,KEYUSABLE,CONSUMABLE,WEAPON,VISAGE};
 func generate_random_ID():
 	var newID = randi();
@@ -25,6 +25,11 @@ func use():
 			PlayerCharacter.singleton.HPChanged(1);
 		ITEMUSEEFFECT.DAMAGE1:
 			PlayerCharacter.singleton.HPChanged(-1);
+		ITEMUSEEFFECT.DASH:
+			var player = PlayerCharacter.singleton;
+			player.currentState=PlayerCharacter.PLAYERSTATE.ACT_DASHING;
+			var timer:Timer = player.dashTimer;
+			timer.start();
 	print("Used "+name);
 func equip():
 	print("Equipped "+name);
@@ -66,6 +71,8 @@ func getIconByID():
 			return "res://PNGs/PotionImage.png"
 		1:
 			return "res://PNGs/PoisonImage.png"
+		5:
+			return "res://PNGs/HammerImage.png"
 		_:
 			print("No icon found for "+str(ID));
 			return "res://PNGs/GreatswordImage.png";

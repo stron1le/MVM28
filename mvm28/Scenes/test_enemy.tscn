@@ -7,7 +7,7 @@
 height = 0.408569
 radius = 0.961914
 
-[node name="TestEnemy" type="RigidBody3D" groups=["Enemy"]]
+[node name="TestEnemy" type="RigidBody3D" groups=["DestroyOnLoad", "Enemy"]]
 gravity_scale = 0.0
 script = ExtResource("1_r1vdb")
 
