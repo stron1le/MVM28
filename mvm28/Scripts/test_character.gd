@@ -10,6 +10,7 @@ const RUN_DECAY=15;
 const MAX_TURN_SPEED_DEGREES=720;
 const COYOTE_TIME_FRAMES=5;
 const MAX_TURN_SPEED=deg_to_rad(MAX_TURN_SPEED_DEGREES);
+const MAX_DASH_TURN_SPEED=deg_to_rad(90);
 const BRAKE_JUMP_SPEEDS=Vector2(20,10)
 const CUT_JUMP_MULTIPLIER=0.5;
 const STANDARD_DRAG=0.35;
@@ -184,9 +185,10 @@ func act_dashing(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	if (movementVector!=Vector2.ZERO):
 		var forwardVec=transform.basis.z;
-		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+		var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
 		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
-		targetAngle=min(delta*MAX_TURN_SPEED,abs(targetAngle))*sign(targetAngle);
+		print(targetAngle);
+		targetAngle=min(MAX_DASH_TURN_SPEED*delta,abs(targetAngle))*sign(targetAngle);
 		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 		prevAngle=targetAngle;
 	forwardVel=15;
