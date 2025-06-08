@@ -69,7 +69,6 @@ size = Vector3(14.5288, 4.3739, 12.5682)
 
 [node name="TestEnemy" parent="." instance=ExtResource("3_rx0dc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.75596, -24.6803)
-collision_layer = 2
 
 [node name="TreasureChest" parent="." instance=ExtResource("4_3tvqv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.988, 0, 37.4878)

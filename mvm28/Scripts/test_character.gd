@@ -41,6 +41,7 @@ static var ActionItem4:Item;
 
 var shapeCastReporter;
 var grabHeightReporter;
+var ledgeLetGo:bool=false;
 func _ready():
 	singleton=self;
 	await get_tree().physics_frame
@@ -185,6 +186,7 @@ func ledge_check():
 		if ($DownwardCast.is_colliding()):
 			global_position.y=$DownwardCast.get_collision_point().y-2;
 			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+			ledgeLetGo=false;
 func act_greatsword_walk(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var intendedMagnitude=movementVector.length();
@@ -319,9 +321,13 @@ func act_ledge_grab(delta):
 	forwardVel=0;
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	ledgeLetGo=ledgeLetGo or movementVector.length()<0.8;
 	if (movementVector!=Vector2.ZERO):
 		var intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
 		if (abs(intendedYawDiff)>PI/2.0):
 			print("letGo");
 			currentState=PLAYERSTATE.ACT_JUMP;
+		elif (ledgeLetGo and movementVector.length()>0.8):
+			currentState=PLAYERSTATE.ACT_JUMP;
+			velocity.y=10;
 			

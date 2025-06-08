@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://1k6dthk2bt0o"]
+[gd_scene load_steps=12 format=3 uid="uid://1k6dthk2bt0o"]
 
 [ext_resource type="Script" uid="uid://rlyeabgpklfj" path="res://Scripts/test_character.gd" id="1_fksbf"]
 [ext_resource type="PackedScene" uid="uid://dgeh53kc8sfcu" path="res://Scenes/pause_menu.tscn" id="2_446ey"]
@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://cvvol0lf73y17" path="res://Models/ThirdTestCharacter.glb" id="10_olav4"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mii0h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iy7e0"]
+distance_fade_mode = 3
+distance_fade_max_distance = 2.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_iy7e0"]
 height = 0.5
@@ -123,6 +127,10 @@ expand_mode = 1
 
 [node name="ThirdTestCharacter" parent="." instance=ExtResource("10_olav4")]
 transform = Transform3D(-0.2, 0, -1.74846e-08, 0, 0.2, 0, 1.74846e-08, 0, -0.2, 0, -0.0435551, 0)
+
+[node name="Cube_003" parent="ThirdTestCharacter/Armature/Skeleton3D" index="0"]
+transform = Transform3D(1, 0, 7.10543e-15, 0, 1, 0, -7.10543e-15, 0, 1, -0.0394082, -0.133534, 0.266423)
+material_override = SubResource("StandardMaterial3D_iy7e0")
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="ThirdTestCharacter/Armature/Skeleton3D" index="1"]
 transform = Transform3D(-0.995788, -1.56229e-07, 0.0916902, 1.18632e-07, -1, -1.85197e-08, 0.0916902, 1.11759e-08, 0.995788, 1.57791, -3.58239, -0.072492)
