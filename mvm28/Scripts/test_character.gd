@@ -18,7 +18,7 @@ const STRAIN_FORWARD_FACTOR=1.5;
 const DRAG_EXCESS_FORWARD_FACTOR=1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR=2.0;
 const DASH_SPEED=15;
-enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_DASHING}
+enum PLAYERSTATE {ACT_STANDING=0x0, ACT_WALKING=0x1, ACT_RUNNING=0x2, ACT_BRAKING=0x3,ACT_JUMP=0x4,ACT_GREATSWORD_WALK,ACT_GREATSWORD_SWING,ACT_TEST,ACT_DASHING,ACT_LEDGE_GRAB}
 @export var currentState:PLAYERSTATE=PLAYERSTATE.ACT_STANDING;
 var prevAngle;
 @export var forwardVel:float=0;
@@ -38,8 +38,14 @@ static var ActionItem2:Item;
 static var ActionItem3:Item;
 static var ActionItem4:Item;
 @export var rightHand:Node3D;
+
+var shapeCastReporter;
+var grabHeightReporter;
 func _ready():
 	singleton=self;
+	await get_tree().physics_frame
+	shapeCastReporter=$ShapeCastResultReporter
+	(shapeCastReporter).reparent(get_tree().root);
 func HPChanged(amount):
 	HP+=amount;
 	HP=clamp(HP,0,maxHP)
@@ -70,6 +76,8 @@ func _physics_process(delta):
 			act_test(delta);
 		PLAYERSTATE.ACT_DASHING:
 			act_dashing(delta);
+		PLAYERSTATE.ACT_LEDGE_GRAB:
+			act_ledge_grab(delta);
 		_:
 			print("There is no such state "+str(currentState))
 			act_walking(delta);
@@ -158,6 +166,25 @@ func act_jump(delta):
 	move_and_slide();
 	if (is_on_floor()):
 		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_WALKING;
+	ledge_check();
+func ledge_check():
+	if (velocity.y>0):
+		return;
+	var forwardShapeCast=$ForwardShapeCast as ShapeCast3D;
+	var aboveForwardShapeCast=$ForwardAboveCast as ShapeCast3D;
+	forwardShapeCast.force_shapecast_update();
+	aboveForwardShapeCast.force_shapecast_update();
+	if (forwardShapeCast.is_colliding() and !aboveForwardShapeCast.is_colliding()):
+		move_and_collide(forwardShapeCast.target_position.length()*(transform.basis.z));
+		var wallNorm=forwardShapeCast.collision_result[0].normal*-1;
+		var forwardVec=transform.basis.z;
+		wallNorm = Vector3(wallNorm.x,0,wallNorm.z).normalized();
+		var targetAngle=forwardVec.signed_angle_to(wallNorm,transform.basis.y);
+		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
+		$DownwardCast.force_raycast_update();
+		if ($DownwardCast.is_colliding()):
+			global_position.y=$DownwardCast.get_collision_point().y-2;
+			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
 func act_greatsword_walk(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var intendedMagnitude=movementVector.length();
@@ -188,7 +215,6 @@ func act_dashing(delta):
 		var forwardVec=transform.basis.z;
 		var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
 		var targetAngle=forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
-		print(targetAngle);
 		targetAngle=min(MAX_DASH_TURN_SPEED*delta,abs(targetAngle))*sign(targetAngle);
 		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 		prevAngle=targetAngle;
@@ -250,7 +276,6 @@ func aerialAdjustment(delta):
 		forwardVel+=1.0*delta;
 	var magVector=forwardVel*transform.basis.z;
 	velocity=Vector3(magVector.x,velocity.y,magVector.z);
-	#print(velocity);
 func act_test(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
@@ -289,3 +314,14 @@ func _on_dash_timer_timeout():
 	pass # Replace with function body.
 func _exit_tree():
 	print('destroyed');
+func act_ledge_grab(delta):
+	velocity=Vector3.ZERO;
+	forwardVel=0;
+	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
+	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector!=Vector2.ZERO):
+		var intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
+		if (abs(intendedYawDiff)>PI/2.0):
+			print("letGo");
+			currentState=PLAYERSTATE.ACT_JUMP;
+			
