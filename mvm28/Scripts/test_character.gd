@@ -43,6 +43,10 @@ var ledgeGrabbedPrevPosition:Vector3;
 var shapeCastReporter;
 var grabHeightReporter;
 var ledgeLetGo:bool=false;
+var addVelOnLetGo:bool=false;
+#GlitchesToFix
+#TODO: platforms don't pause with global.paused
+#TODO: Consider whether using velocity to measure if you should grab is wise.
 func _ready():
 	if (!ledgeGrabbedObject):
 		ledgeGrabbedObject=Node3D.new();
@@ -63,6 +67,7 @@ func _process(delta):
 func _physics_process(delta):
 	if (Globals.paused):
 		return;
+	print(velocity);
 	match(currentState):
 		PLAYERSTATE.ACT_STANDING:
 			act_standing(delta);
@@ -85,6 +90,7 @@ func _physics_process(delta):
 		_:
 			print("There is no such state "+str(currentState))
 			act_walking(delta);
+	print(global_position);
 	#print(currentState);
 func act_walking(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
@@ -166,9 +172,11 @@ func act_jump(delta):
 	if (canCutJump and !Input.is_action_pressed("Jump") and velocity.y>0):
 		velocity.y*=CUT_JUMP_MULTIPLIER;
 		canCutJump=false;
+		print(true);
 	velocity+=get_gravity()*delta;
 	move_and_slide();
 	if (is_on_floor()):
+		canCutJump=false;
 		currentState=PLAYERSTATE.ACT_STANDING if intendedMagnitude==0 else PLAYERSTATE.ACT_WALKING;
 	ledge_check();
 func ledge_check():
@@ -189,6 +197,7 @@ func ledge_check():
 		if ($DownwardCast.is_colliding()):
 			var hitObject=$DownwardCast.get_collider();
 			global_position.y=$DownwardCast.get_collision_point().y-2;
+			canCutJump=false;
 			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
 			if (ledgeGrabbedObject.get_parent()):
 				ledgeGrabbedObject.reparent(hitObject);
@@ -342,15 +351,12 @@ func act_ledge_grab(delta):
 		if (abs(intendedYawDiff)>PI/2.0):
 			print("letGo");
 			currentState=PLAYERSTATE.ACT_JUMP;
-			velocity+=addedVel/delta;
-			#if ("velocity" in ledgeGrabbedObject.get_parent()):
-			#	velocity+=ledgeGrabbedObject.get_parent().velocity;
-			#elif ("constant_linear_velocity" in ledgeGrabbedObject.get_parent()):
-			#	velocity+=ledgeGrabbedObject.get_parent().constant_linear_velocity;
-			#	print(ledgeGrabbedObject.get_parent().constant_linear_velocity);
+			if (addVelOnLetGo):
+				velocity+=addedVel/delta;
 		elif (ledgeLetGo and movementVector.length()>0.8):
 			currentState=PLAYERSTATE.ACT_JUMP;
 			velocity.y=10;
-			velocity+=addedVel/delta;
+			if (addVelOnLetGo):
+				velocity+=addedVel/delta;
 		return;
 	
