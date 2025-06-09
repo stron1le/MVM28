@@ -141,7 +141,7 @@ bone_idx = 10
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="DashTimer" type="Timer" parent="."]
-wait_time = 6.0
+wait_time = 3.0
 one_shot = true
 
 [node name="ForwardShapeCast" type="ShapeCast3D" parent="."]

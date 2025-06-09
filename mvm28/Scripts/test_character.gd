@@ -38,11 +38,14 @@ static var ActionItem2:Item;
 static var ActionItem3:Item;
 static var ActionItem4:Item;
 @export var rightHand:Node3D;
-
+@export var ledgeGrabbedObject:Node3D;
+var ledgeGrabbedPrevPosition:Vector3;
 var shapeCastReporter;
 var grabHeightReporter;
 var ledgeLetGo:bool=false;
 func _ready():
+	if (!ledgeGrabbedObject):
+		ledgeGrabbedObject=Node3D.new();
 	singleton=self;
 	await get_tree().physics_frame
 	shapeCastReporter=$ShapeCastResultReporter
@@ -184,8 +187,16 @@ func ledge_check():
 		transform.basis=transform.basis.rotated(transform.basis.y,targetAngle);
 		$DownwardCast.force_raycast_update();
 		if ($DownwardCast.is_colliding()):
+			var hitObject=$DownwardCast.get_collider();
 			global_position.y=$DownwardCast.get_collision_point().y-2;
 			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+			if (ledgeGrabbedObject.get_parent()):
+				ledgeGrabbedObject.reparent(hitObject);
+			else:
+				hitObject.add_child(ledgeGrabbedObject)
+			ledgeGrabbedObject.global_basis=global_basis;
+			ledgeGrabbedObject.global_position=global_position;
+			ledgeGrabbedPrevPosition=ledgeGrabbedObject.global_position;
 			ledgeLetGo=false;
 func act_greatsword_walk(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
@@ -322,12 +333,24 @@ func act_ledge_grab(delta):
 	var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 	var movementVector3D=Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
 	ledgeLetGo=ledgeLetGo or movementVector.length()<0.8;
+	var intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
+	var addedVel=ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
+	ledgeGrabbedPrevPosition=ledgeGrabbedObject.global_position;
+	global_basis=ledgeGrabbedObject.global_basis
+	global_position=ledgeGrabbedObject.global_position;
 	if (movementVector!=Vector2.ZERO):
-		var intendedYawDiff=transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
 		if (abs(intendedYawDiff)>PI/2.0):
 			print("letGo");
 			currentState=PLAYERSTATE.ACT_JUMP;
+			velocity+=addedVel/delta;
+			#if ("velocity" in ledgeGrabbedObject.get_parent()):
+			#	velocity+=ledgeGrabbedObject.get_parent().velocity;
+			#elif ("constant_linear_velocity" in ledgeGrabbedObject.get_parent()):
+			#	velocity+=ledgeGrabbedObject.get_parent().constant_linear_velocity;
+			#	print(ledgeGrabbedObject.get_parent().constant_linear_velocity);
 		elif (ledgeLetGo and movementVector.length()>0.8):
 			currentState=PLAYERSTATE.ACT_JUMP;
 			velocity.y=10;
-			
+			velocity+=addedVel/delta;
+		return;
+	

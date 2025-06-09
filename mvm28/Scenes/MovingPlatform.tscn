@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkf8o4rbiasfl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3rmdf"]
+size = Vector3(30, 1, 30)
+
+[node name="MovingPlatform" type="AnimatableBody3D"]
+collision_layer = 2
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_3rmdf")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+size = Vector3(30, 1, 30)
