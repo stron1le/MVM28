@@ -4,9 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://dgeh53kc8sfcu" path="res://Scenes/pause_menu.tscn" id="2_446ey"]
 [ext_resource type="PackedScene" uid="uid://c2tmaa5okxklb" path="res://Scenes/debug_menu.tscn" id="2_num78"]
 [ext_resource type="PackedScene" uid="uid://bro3q448jh6qc" path="res://Scenes/health_bar.tscn" id="4_h7y0j"]
-[ext_resource type="Texture2D" uid="uid://d1ip7p8pyhfrf" path="res://PNGs/ItemHolder.png" id="5_pwth5"]
-[ext_resource type="Script" uid="uid://id52bnx5n2m5" path="res://Scripts/ActionButton.gd" id="6_mgxxk"]
-[ext_resource type="PackedScene" uid="uid://cvvol0lf73y17" path="res://Models/ThirdTestCharacter.glb" id="10_olav4"]
+[ext_resource type="Texture2D" uid="uid://d1ip7p8pyhfrf" path="res://PNGs/item_holder.png" id="5_pwth5"]
+[ext_resource type="Script" uid="uid://id52bnx5n2m5" path="res://Scripts/action_button.gd" id="6_mgxxk"]
+[ext_resource type="PackedScene" uid="uid://cvvol0lf73y17" path="res://Models/third_test_character.glb" id="10_olav4"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_mii0h"]
 

@@ -1,18 +1,27 @@
 extends Button
-@export var saveId=0;
-var shouldActivate=false;
+
+@export var saveId = 0;
+
+var shouldActivate = false;
+
+
 func _ready():
 	checkClickable()
 
+
 func _on_button_down():
 	GlobalSettings.load_save_file(saveId)
+
+
 func checkClickable():
 	if (GlobalSettings.save_exists(saveId)):
-		text="Save "+str(saveId);
-		disabled=false;
+		text = "Save " + str(saveId);
+		disabled = false;
 	else:
-		text="No save";
-		disabled=true;
+		text = "No save";
+		disabled = true;
+
+
 func _process(delta):
 	if (is_hovered()):
 		grab_focus();

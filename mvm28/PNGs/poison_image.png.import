@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bpswnkeocihea"
-path="res://.godot/imported/GreatswordImage.png-683751559e54468a37b6098e8d7aa993.ctex"
+uid="uid://cqo0deauf3v8p"
+path="res://.godot/imported/poison_image.png-e1ee12706e3319b099042aaa1685faa4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://PNGs/GreatswordImage.png"
-dest_files=["res://.godot/imported/GreatswordImage.png-683751559e54468a37b6098e8d7aa993.ctex"]
+source_file="res://PNGs/poison_image.png"
+dest_files=["res://.godot/imported/poison_image.png-e1ee12706e3319b099042aaa1685faa4.ctex"]
 
 [params]
 

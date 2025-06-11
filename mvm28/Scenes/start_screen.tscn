@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bkpsvcceuq300"]
 
 [ext_resource type="Script" uid="uid://b7efqvc0pkohk" path="res://Scripts/start_screen.gd" id="1_ainjc"]
-[ext_resource type="Script" uid="uid://em4hj14pl37n" path="res://Scripts/SaveHolder.gd" id="2_60ddj"]
+[ext_resource type="Script" uid="uid://em4hj14pl37n" path="res://Scripts/save_holder.gd" id="2_60ddj"]
 
 [node name="Start Screen" type="Control"]
 layout_mode = 3

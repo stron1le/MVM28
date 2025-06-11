@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://q3qrpv488j1n" path="res://Scripts/save_crystal.gd" id="1_lulg3"]
 [ext_resource type="PackedScene" uid="uid://1k6dthk2bt0o" path="res://Scenes/test_character.tscn" id="2_ri7ci"]
-[ext_resource type="PackedScene" uid="uid://c5iohw4yba8m4" path="res://Scenes/PlayerCamera.tscn" id="3_ght8y"]
+[ext_resource type="PackedScene" uid="uid://c5iohw4yba8m4" path="res://Scenes/player_camera.tscn" id="3_ght8y"]
 
 [sub_resource type="Curve" id="Curve_dx0k3"]
 _limits = [0.1, 1.0, 0.0, 1.0]

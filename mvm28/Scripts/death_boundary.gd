@@ -1,4 +1,5 @@
 extends Area3D
+
 func reset():
 	Globals.load_level();
 

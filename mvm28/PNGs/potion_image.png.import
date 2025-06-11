@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b18xrfmft820e"
-path="res://.godot/imported/HammerImage.png-8abd6aab49f12973ff2a4139b7f87992.ctex"
+uid="uid://tcpboheu5en8"
+path="res://.godot/imported/potion_image.png-8eb833c0e9bf6990eab09c6021fbae28.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://PNGs/HammerImage.png"
-dest_files=["res://.godot/imported/HammerImage.png-8abd6aab49f12973ff2a4139b7f87992.ctex"]
+source_file="res://PNGs/potion_image.png"
+dest_files=["res://.godot/imported/potion_image.png-8eb833c0e9bf6990eab09c6021fbae28.ctex"]
 
 [params]
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ddfaeome8lgwj"]
 
-[ext_resource type="Script" uid="uid://dvtq3onjga84" path="res://Scripts/LockOnTarget.gd" id="1_miejr"]
+[ext_resource type="Script" uid="uid://dvtq3onjga84" path="res://Scripts/lockon_target.gd" id="1_miejr"]
 
 [node name="LockOnTarget" type="Node3D"]
 script = ExtResource("1_miejr")

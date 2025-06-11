@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b6c4qedbwxmug"]
 
-[ext_resource type="Script" uid="uid://dcjw6aithmtu4" path="res://Scripts/inventory_item_slot.gd" id="1_icju2"]
+[ext_resource type="Script" uid="uid://dcjw6aithmtu4" path="res://Scripts/inventory_item_slot.gd" id="1_c5po8"]
 
 [sub_resource type="Gradient" id="Gradient_icju2"]
 
@@ -12,7 +12,7 @@ fill_to = Vector2(1, 1)
 offset_right = 64.0
 offset_bottom = 64.0
 texture_normal = SubResource("GradientTexture2D_tkqec")
-script = ExtResource("1_icju2")
+script = ExtResource("1_c5po8")
 
 [node name="IconHolder" type="TextureRect" parent="."]
 layout_mode = 0
