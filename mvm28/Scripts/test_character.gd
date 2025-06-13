@@ -231,6 +231,7 @@ func act_jump(delta):
 			global_position=prevPosition;
 		else:
 			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+			canCutJump=false;
 		#var floorhit = move_and_collide(direction);
 		#if (!floorhit):
 		#	currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
@@ -239,8 +240,8 @@ func act_jump(delta):
 		#	print('too close to ground');
 		#	global_position=prevPosition;
 	#ledge_check();
-
-
+	
+	
 func act_greatsword_walk(delta):
 	var intendedMagnitude = movementVector2D.length();
 	if (movementVector2D != Vector2.ZERO):
