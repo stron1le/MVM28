@@ -58,8 +58,11 @@ var shapeCastReporter;
 var grabHeightReporter;
 var ledgeLetGo:bool = false;
 var addVelOnLetGo:bool = false;
-
-
+var movementVector2D:Vector2;
+var movementVector3D:Vector3;
+var forwardShapeCast:ShapeCast3D;
+var aboveForwardShapeCast:ShapeCast3D;
+var downwardCast:RayCast3D;
 static var singleton;
 static var ActionItem1:Item;
 static var ActionItem2:Item;
@@ -78,7 +81,9 @@ func _ready():
 	await get_tree().physics_frame
 	shapeCastReporter = $ShapeCastResultReporter
 	(shapeCastReporter).reparent(get_tree().root);
-
+	forwardShapeCast = $ForwardShapeCast as ShapeCast3D;
+	aboveForwardShapeCast = $ForwardAboveCast as ShapeCast3D;
+	downwardCast=$DownwardCast as RayCast3D;
 
 func HPChanged(amount):
 	HP += amount;
@@ -92,12 +97,11 @@ func _process(delta):
 		$PauseMenu.visible = not $PauseMenu.visible;
 	if (Input.is_action_just_pressed("Attack")):
 		makeAttack();
-
+	movementVector2D=get_controller_movement_axes()
 
 func _physics_process(delta):
 	if (Globals.paused):
 		return;
-	print(velocity);
 	match(currentState):
 		PLAYERSTATE.ACT_STANDING:
 			act_standing(delta);
@@ -120,21 +124,17 @@ func _physics_process(delta):
 		_:
 			print("There is no such state " + str(currentState))
 			act_walking(delta);
-	print(global_position);
-	#print(currentState);
 
 
 func act_walking(delta):
-	var movementVector = get_controller_movement_axes();
-	var intendedMagnitude = movementVector.length();
-	var forwardVec = transform.basis.z;
-	forwardVec.y = 0;
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y)
+	var intendedMagnitude = movementVector2D.length();
+	var forwardVec = get_horizontal_forward();
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y)
 	movementVector3D = movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 	var shouldRotate:bool = true;
-	if (movementVector != Vector2.ZERO):
+	if (movementVector2D != Vector2.ZERO):
 		var targetAngle = forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
-		if (abs(targetAngle) >= (BRAKE_RANGE)):
+		if (abs(targetAngle) >= (BRAKE_RANGE) and forwardVel>2):
 			currentState = PLAYERSTATE.ACT_BRAKING;
 			intendedMagnitude = 0;
 			shouldRotate = false;
@@ -155,11 +155,10 @@ func act_walking(delta):
 
 
 func act_standing(delta):
-	var movementVector = get_controller_movement_axes();
-	var intendedMagnitude = movementVector.length();
-	if (movementVector != Vector2.ZERO):
-		var forwardVec = transform.basis.z;
-		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+	var intendedMagnitude = movementVector2D.length();
+	if (movementVector2D != Vector2.ZERO):
+		var forwardVec = get_horizontal_forward();
+		var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).normalized();
 		movementVector3D = movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 		var targetAngle = forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
@@ -185,10 +184,9 @@ func act_braking(delta):
 
 
 func check_common_exits():
-	var movementVector = get_controller_movement_axes();
-	var intendedMagnitude = movementVector.length();
+	var intendedMagnitude = movementVector2D.length();
 	var brakeCheck=currentState == PLAYERSTATE.ACT_BRAKING;
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y);
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y);
 	movementVector3D = movementVector3D.rotated(transform.basis.y,get_camera_yaw());
 	if (Input.is_action_just_pressed("Jump")):
 		velocity.y = (BRAKE_JUMP_SPEEDS.y if (brakeCheck) 
@@ -209,57 +207,45 @@ func calculate_Yspeed_based_on_horizontal_speed(initialSpeed,multiplier):
 
 
 func act_jump(delta):
-	var movementVector = get_controller_movement_axes();
-	var intendedMagnitude = movementVector.length();
+	var intendedMagnitude = movementVector2D.length();
 	if (canCutJump and not Input.is_action_pressed("Jump") and velocity.y>0):
 		velocity.y *= CUT_JUMP_MULTIPLIER;
 		canCutJump = false;
-		print(true);
 	velocity += get_gravity()*delta;
 	move_and_slide();
+	
 	if (is_on_floor()):
 		canCutJump = false;
 		currentState = (PLAYERSTATE.ACT_STANDING if intendedMagnitude == 0 
 				else PLAYERSTATE.ACT_WALKING);
-	ledge_check();
-
-
-func ledge_check():
-	if (velocity.y>0):
-		return;
-	var forwardShapeCast = $ForwardShapeCast as ShapeCast3D;
-	var aboveForwardShapeCast = $ForwardAboveCast as ShapeCast3D;
-	forwardShapeCast.force_shapecast_update();
 	aboveForwardShapeCast.force_shapecast_update();
-	if (forwardShapeCast.is_colliding() and not aboveForwardShapeCast.is_colliding()):
-		move_and_collide(forwardShapeCast.target_position.length()*(transform.basis.z));
-		var wallNorm = forwardShapeCast.collision_result[0].normal*-1;
-		var forwardVec = transform.basis.z;
-		wallNorm = Vector3(wallNorm.x,0,wallNorm.z).normalized();
-		var targetAngle = forwardVec.signed_angle_to(wallNorm,transform.basis.y);
-		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
-		$DownwardCast.force_raycast_update();
-		if ($DownwardCast.is_colliding()):
-			var hitObject = $DownwardCast.get_collider();
-			global_position.y = $DownwardCast.get_collision_point().y-2;
-			canCutJump = false;
-			currentState = PLAYERSTATE.ACT_LEDGE_GRAB;
-			if (ledgeGrabbedObject.get_parent()):
-				ledgeGrabbedObject.reparent(hitObject);
-			else:
-				hitObject.add_child(ledgeGrabbedObject)
-			ledgeGrabbedObject.global_basis = global_basis;
-			ledgeGrabbedObject.global_position = global_position;
-			ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
-			ledgeLetGo = false;
+	if (is_on_wall_only() and velocity.y<0 and !aboveForwardShapeCast.is_colliding() and forwardShapeCast.is_colliding()):
+		var wallNorm=get_wall_normal();
+		wallNorm.y=0;
+		look_at(global_position+wallNorm);
+		downwardCast.force_raycast_update();
+		var prevPosition=global_position
+		global_position.y=downwardCast.get_collision_point().y-2;
+		$GroundCheck.force_shapecast_update();
+		if ($GroundCheck.is_colliding()):
+			global_position=prevPosition;
+		else:
+			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+		#var floorhit = move_and_collide(direction);
+		#if (!floorhit):
+		#	currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+		#	print("huzzahhuzzah");
+		#else:
+		#	print('too close to ground');
+		#	global_position=prevPosition;
+	#ledge_check();
 
 
 func act_greatsword_walk(delta):
-	var movementVector = get_controller_movement_axes();
-	var intendedMagnitude = movementVector.length();
-	if (movementVector != Vector2.ZERO):
-		var forwardVec = transform.basis.z;
-		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).normalized();
+	var intendedMagnitude = movementVector2D.length();
+	if (movementVector2D != Vector2.ZERO):
+		var forwardVec = get_horizontal_forward();
+		var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).normalized();
 		var targetAngle = forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
 		prevAngle = targetAngle;
@@ -283,10 +269,9 @@ func act_greatsword_swing(delta):
 
 
 func act_dashing(delta):
-	var movementVector = get_controller_movement_axes();
-	if (movementVector != Vector2.ZERO):
-		var forwardVec = transform.basis.z;
-		var movementVector3D = Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector2D != Vector2.ZERO):
+		var forwardVec = get_horizontal_forward();
+		var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 		var targetAngle = forwardVec.signed_angle_to(movementVector3D,transform.basis.y);
 		targetAngle = min(MAX_DASH_TURN_SPEED*delta,abs(targetAngle))*sign(targetAngle);
 		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
@@ -352,9 +337,8 @@ func aerialAdjustment(delta):
 		_:
 			dragThreshold = MAX_RUN_SPEED*1.5;
 	forwardVel = move_toward(forwardVel,0,delta*STANDARD_DRAG);
-	var movementVector = get_controller_movement_axes();
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
-	if (movementVector != Vector2.ZERO):
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector2D != Vector2.ZERO):
 		intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
 		intendedMagnitude = movementVector3D.length();
 		forwardVel += STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*delta*intendedMagnitude;
@@ -368,8 +352,7 @@ func aerialAdjustment(delta):
 
 
 func act_test(delta):
-	var movementVector = get_controller_movement_axes()
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 
 
 func act_test_jump_momentum(delta):
@@ -382,17 +365,12 @@ func act_test_jump_momentum(delta):
 		_:
 			dragThreshold = MAX_RUN_SPEED*1.5;
 	forwardVel = move_toward(forwardVel,0,delta*STANDARD_DRAG);
-	var movementVector = get_controller_movement_axes()
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
-	if (movementVector != Vector2.ZERO):
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
+	if (movementVector2D != Vector2.ZERO):
 		intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
 		intendedMagnitude = movementVector3D.length();
 		forwardVel += (STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*intendedMagnitude*delta);
 		var rotationComp = sin(intendedYawDiff)*intendedMagnitude;
-		print("");
-		print("intendedYawDiff: " + str(intendedYawDiff));
-		print("intendedMagnitude: " + str(intendedMagnitude));
-		print("rotationComp: " + str(rotationComp));
 	#transform.basis = transform.basis.rotated(transform.basis.y,PI*delta);
 
 
@@ -432,28 +410,60 @@ func _exit_tree():
 func act_ledge_grab(delta):
 	velocity = Vector3.ZERO;
 	forwardVel = 0;
-	var movementVector = get_controller_movement_axes()
-	var movementVector3D = Vector3(movementVector.x,0,movementVector.y).rotated(transform.basis.y,get_camera_yaw());
-	ledgeLetGo = ledgeLetGo or movementVector.length()<0.8;
+	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
+	ledgeLetGo = ledgeLetGo or movementVector2D.length()<0.8;
 	var intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
-	var addedVel = ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
-	ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
-	global_basis = ledgeGrabbedObject.global_basis
-	global_position = ledgeGrabbedObject.global_position;
-	if (movementVector != Vector2.ZERO):
+	#var addedVel = ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
+	#ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
+	#global_basis = ledgeGrabbedObject.global_basis
+	#global_position = ledgeGrabbedObject.global_position;
+	if (movementVector2D != Vector2.ZERO):
 		if (abs(intendedYawDiff)>PI/2.0):
-			print("letGo");
 			currentState = PLAYERSTATE.ACT_JUMP;
-			if (addVelOnLetGo):
-				velocity += addedVel/delta;
-		elif (ledgeLetGo and movementVector.length()>0.8):
+			#if (addVelOnLetGo):
+				#velocity += addedVel/delta;
+		elif (ledgeLetGo and movementVector2D.length()>0.8):
 			currentState = PLAYERSTATE.ACT_JUMP;
 			velocity.y = 10;
-			if (addVelOnLetGo):
-				velocity += addedVel/delta;
+			#if (addVelOnLetGo):
+				#velocity += addedVel/delta;
 		return;
 
 
 func get_controller_movement_axes():
 	return Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive",
 			"ForwardAxisNegative","ForwardAxisPositive");
+
+
+func get_horizontal_forward():
+	var forVec = transform.basis.z;
+	forVec.y=0;
+	return forVec;
+
+
+func ledge_check():
+	if (velocity.y>0):
+		return;
+	forwardShapeCast.force_shapecast_update();
+	aboveForwardShapeCast.force_shapecast_update();
+	if (forwardShapeCast.is_colliding() and not aboveForwardShapeCast.is_colliding()):
+		move_and_collide(forwardShapeCast.target_position.length()*(transform.basis.z));
+		var wallNorm = forwardShapeCast.collision_result[0].normal*-1;
+		var forwardVec = get_horizontal_forward()
+		wallNorm = Vector3(wallNorm.x,0,wallNorm.z).normalized();
+		var targetAngle = forwardVec.signed_angle_to(wallNorm,transform.basis.y);
+		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
+		downwardCast.force_raycast_update();
+		if (downwardCast.is_colliding()):
+			var hitObject = downwardCast.get_collider();
+			global_position.y = downwardCast.get_collision_point().y-2;
+			canCutJump = false;
+			currentState = PLAYERSTATE.ACT_LEDGE_GRAB;
+			if (ledgeGrabbedObject.get_parent()):
+				ledgeGrabbedObject.reparent(hitObject);
+			else:
+				hitObject.add_child(ledgeGrabbedObject)
+			ledgeGrabbedObject.global_basis = global_basis;
+			ledgeGrabbedObject.global_position = global_position;
+			ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
+			ledgeLetGo = false;

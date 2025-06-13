@@ -9,12 +9,12 @@ const CAMERA_TURN_SPEED = deg_to_rad(180);
 
 var lockTarget;
 var mouseHidden:bool = true;
-
-
+var pitchPivot;
+var springArm:SpringArm3D;
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
-
-
+	pitchPivot=$PitchPivot;
+	springArm=$PitchPivot/SpringArm3D as SpringArm3D;
 func _process(delta):
 	if (Input.is_action_just_pressed("Lockon")):
 		if (lockTarget):
@@ -46,16 +46,16 @@ func _physics_process(delta):
 		var cam_target_angle = CAMERA_TURN_SPEED*cam_input.x*delta
 		transform.basis = transform.basis.rotated(transform.basis.y,cam_target_angle);
 		cam_target_angle = CAMERA_TURN_SPEED*cam_input.y*delta;
-		$PitchPivot.transform.basis = $PitchPivot.transform.basis.rotated($PitchPivot.transform.basis.x,cam_target_angle)
-		$PitchPivot.rotation_degrees.x = clamp($PitchPivot.rotation_degrees.x,-60,60);
+		pitchPivot.transform.basis = pitchPivot.transform.basis.rotated(pitchPivot.transform.basis.x,cam_target_angle)
+		pitchPivot.rotation_degrees.x = clamp(pitchPivot.rotation_degrees.x,-60,60);
 	moveCameraRelative(delta);
 
 
 func _unhandled_input(event):
 	if ((event is InputEventMouseMotion) and not Globals.paused and not lockTarget):
 		rotation_degrees.y -= event.relative.x*0.5;
-		$PitchPivot.rotation_degrees.x -= event.relative.y*0.2;
-		$PitchPivot.rotation_degrees.x = clamp($PitchPivot.rotation_degrees.x,-60,60);
+		pitchPivot.rotation_degrees.x -= event.relative.y*0.2;
+		pitchPivot.rotation_degrees.x = clamp(pitchPivot.rotation_degrees.x,-60,60);
 	elif (Input.is_action_just_pressed("ui_cancel")):
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if mouseHidden else Input.MOUSE_MODE_CAPTURED);
 		mouseHidden = not mouseHidden;
@@ -65,13 +65,13 @@ func moveCameraRelative(delta):
 	if (target is PlayerCharacter and target.currentState == PlayerCharacter.PLAYERSTATE.ACT_JUMP):
 		return;
 	if ("velocity" in target):
-		displacer.global_position = $PitchPivot.global_position + target.velocity.normalized()*maxDisplacement;
+		displacer.global_position = pitchPivot.global_position + target.velocity.normalized()*maxDisplacement;
 		var movementVector = Input.get_vector("HorizontalAxisNegative","HorizontalAxisPositive","ForwardAxisNegative","ForwardAxisPositive");
 		if (movementVector == Vector2.ZERO):
-			displacer.global_position = $PitchPivot.global_position;
+			displacer.global_position = pitchPivot.global_position;
 		displacer.position.y = 0;
 		displacer.position.z = 0;
-		$PitchPivot/SpringArm3D.position.x = move_toward($PitchPivot/SpringArm3D.position.x,displacer.position.x,delta);
+		springArm.position.x = move_toward(springArm.position.x,displacer.position.x,delta);
 		#print($PitchPivot/SpringArm3D.position)
 
 

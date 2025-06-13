@@ -180,4 +180,16 @@ libraries = {
 &"": SubResource("AnimationLibrary_q5jsk")
 }
 
+[node name="StaticBody3D4" type="StaticBody3D" parent="." groups=["Enemy"]]
+transform = Transform3D(0.378729, -0.925507, 0, 0.925507, 0.378729, 0, 0, 0, 1, 35.7069, 4.38283, 0)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.79907, 1.67981, 5.73785)
+shape = SubResource("BoxShape3D_ycph5")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.7644, 1.68695, 5.78412)
+size = Vector3(14.5288, 4.3739, 12.5682)
+
 [connection signal="body_entered" from="DeathBoundary" to="DeathBoundary" method="_on_body_entered"]
