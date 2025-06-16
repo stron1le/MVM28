@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://1k6dthk2bt0o"]
+[gd_scene load_steps=14 format=3 uid="uid://1k6dthk2bt0o"]
 
 [ext_resource type="Script" uid="uid://rlyeabgpklfj" path="res://Scripts/test_character.gd" id="1_fksbf"]
 [ext_resource type="PackedScene" uid="uid://dgeh53kc8sfcu" path="res://Scenes/pause_menu.tscn" id="2_446ey"]
@@ -20,6 +20,10 @@ height = 0.5
 [sub_resource type="SphereShape3D" id="SphereShape3D_iy7e0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_co0b2"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_co0b2"]
+height = 1.5
+radius = 0.6
 
 [node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand") groups=["DestroyOnLoad", "Player"]]
 collision_mask = 2
@@ -165,13 +169,19 @@ target_position = Vector3(0, 0, 1)
 collision_mask = 2
 
 [node name="DownwardCast" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.06108, 0.509029)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.061, 0.61)
 target_position = Vector3(0, -2, 0)
 collision_mask = 2
 
 [node name="GroundCheck" type="ShapeCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_co0b2")
+target_position = Vector3(0, 0, 0)
+collision_mask = 2
+
+[node name="Wallcheck" type="ShapeCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_co0b2")
 target_position = Vector3(0, 0, 0)
 collision_mask = 2
 

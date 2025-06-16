@@ -219,8 +219,15 @@ func act_jump(delta):
 		currentState = (PLAYERSTATE.ACT_STANDING if intendedMagnitude == 0 
 				else PLAYERSTATE.ACT_WALKING);
 	aboveForwardShapeCast.force_shapecast_update();
-	if (is_on_wall_only() and velocity.y<0 and !aboveForwardShapeCast.is_colliding() and forwardShapeCast.is_colliding()):
-		var wallNorm=get_wall_normal();
+	forwardShapeCast.force_shapecast_update();
+	var shapecastsSatisfied:bool = (!aboveForwardShapeCast.is_colliding() and forwardShapeCast.is_colliding());
+	if (shapecastsSatisfied):
+		print("shapecast is good");	
+	var wallcheck = $Wallcheck as ShapeCast3D;
+	wallcheck.force_shapecast_update();
+	
+	if (wallcheck.is_colliding() and velocity.y<0 and shapecastsSatisfied):
+		var wallNorm=wallcheck.get_collision_normal(0);
 		wallNorm.y=0;
 		look_at(global_position+wallNorm);
 		downwardCast.force_raycast_update();
