@@ -23,9 +23,9 @@ height = 0.5
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_co0b2"]
 height = 1.5
-radius = 0.6
+radius = 0.8
 
-[node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand") groups=["DestroyOnLoad", "Player"]]
+[node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand", "ledgeGrabbedObject") groups=["DestroyOnLoad", "Player"]]
 collision_mask = 2
 floor_snap_length = 0.3
 script = ExtResource("1_fksbf")
@@ -33,6 +33,7 @@ currentState = 1
 forwardVel = 7.0
 dashTimer = NodePath("DashTimer")
 rightHand = NodePath("ThirdTestCharacter/Armature/Skeleton3D/BoneAttachment3D/Hand")
+ledgeGrabbedObject = NodePath("ShapeCastResultReporter")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -169,8 +170,8 @@ target_position = Vector3(0, 0, 1)
 collision_mask = 2
 
 [node name="DownwardCast" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.061, 0.61)
-target_position = Vector3(0, -2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.37322, 0.61)
+target_position = Vector3(0, -2.735, 0)
 collision_mask = 2
 
 [node name="GroundCheck" type="ShapeCast3D" parent="."]

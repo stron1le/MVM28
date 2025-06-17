@@ -57,7 +57,7 @@ var ledgeGrabbedPrevPosition:Vector3;
 var shapeCastReporter;
 var grabHeightReporter;
 var ledgeLetGo:bool = false;
-var addVelOnLetGo:bool = false;
+var addVelOnLetGo:bool = true;
 var movementVector2D:Vector2;
 var movementVector3D:Vector3;
 var forwardShapeCast:ShapeCast3D;
@@ -230,25 +230,25 @@ func act_jump(delta):
 		var wallNorm=wallcheck.get_collision_normal(0);
 		wallNorm.y=0;
 		look_at(global_position+wallNorm);
+		downwardCast.global_position.x=wallcheck.get_collision_point(0).x+transform.basis.z.x*.1;
+		downwardCast.global_position.z=wallcheck.get_collision_point(0).z+transform.basis.z.z*.1;
 		downwardCast.force_raycast_update();
 		var prevPosition=global_position
 		global_position.y=downwardCast.get_collision_point().y-2;
 		$GroundCheck.force_shapecast_update();
 		if ($GroundCheck.is_colliding()):
 			global_position=prevPosition;
+			print('hit');
 		else:
 			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
 			canCutJump=false;
-		#var floorhit = move_and_collide(direction);
-		#if (!floorhit):
-		#	currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
-		#	print("huzzahhuzzah");
-		#else:
-		#	print('too close to ground');
-		#	global_position=prevPosition;
-	#ledge_check();
-	
-	
+			var hitObject = downwardCast.get_collider();
+			if (ledgeGrabbedObject.get_parent()):
+				ledgeGrabbedObject.reparent(hitObject);
+			else:
+				hitObject.add_child(ledgeGrabbedObject)
+			ledgeGrabbedObject.global_position=global_position;
+			ledgeGrabbedObject.global_basis=global_basis;
 func act_greatsword_walk(delta):
 	var intendedMagnitude = movementVector2D.length();
 	if (movementVector2D != Vector2.ZERO):
@@ -430,22 +430,24 @@ func act_ledge_grab(delta):
 	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 	ledgeLetGo = ledgeLetGo or movementVector2D.length()<0.8;
 	var intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
-	#var addedVel = ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
-	#ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
-	#global_basis = ledgeGrabbedObject.global_basis
-	#global_position = ledgeGrabbedObject.global_position;
+	var addedVel = ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
+	ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
+	var newForward=-ledgeGrabbedObject.transform.basis.z.normalized();
+	newForward.y=0;
+	look_at(position+newForward);
+	global_position = ledgeGrabbedObject.global_position;
 	if (movementVector2D != Vector2.ZERO):
 		if (abs(intendedYawDiff)>PI/2.0 and ledgeLetGo):
 			currentState = PLAYERSTATE.ACT_JUMP;
 			ledgeLetGo=false;
-			#if (addVelOnLetGo):
-				#velocity += addedVel/delta;
+			if (addVelOnLetGo):
+				velocity += addedVel/delta;
 		elif (ledgeLetGo and movementVector2D.length()>0.8):
 			currentState = PLAYERSTATE.ACT_JUMP;
 			velocity.y = 10;
 			ledgeLetGo=false;
-			#if (addVelOnLetGo):
-				#velocity += addedVel/delta;
+			if (addVelOnLetGo):
+				velocity += addedVel/delta;
 		return;
 
 
