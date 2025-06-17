@@ -19,7 +19,7 @@ const MAX_DASH_TURN_SPEED = deg_to_rad(90);
 const BRAKE_JUMP_SPEEDS = Vector2(20,10)
 const CUT_JUMP_MULTIPLIER = 0.5;
 const STANDARD_DRAG = 0.35;
-const STRAIN_FORWARD_FACTOR = 1.5;
+const STRAIN_FORWARD_FACTOR = 20;
 const DRAG_EXCESS_FORWARD_FACTOR = 1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR = 2.0;
 const DASH_SPEED = 15;
@@ -212,6 +212,7 @@ func act_jump(delta):
 		velocity.y *= CUT_JUMP_MULTIPLIER;
 		canCutJump = false;
 	velocity += get_gravity()*delta;
+	aerialAdjustment(delta);
 	move_and_slide();
 	
 	if (is_on_floor()):
@@ -221,8 +222,7 @@ func act_jump(delta):
 	aboveForwardShapeCast.force_shapecast_update();
 	forwardShapeCast.force_shapecast_update();
 	var shapecastsSatisfied:bool = (!aboveForwardShapeCast.is_colliding() and forwardShapeCast.is_colliding());
-	if (shapecastsSatisfied):
-		print("shapecast is good");	
+	
 	var wallcheck = $Wallcheck as ShapeCast3D;
 	wallcheck.force_shapecast_update();
 	
@@ -336,29 +336,38 @@ func coyoteTimerSteps():
 
 
 func aerialAdjustment(delta):
-	var dragThreshold
+	var dragThreshold;
+	var sidewaysSpeed=0;
 	var intendedYawDiff;
 	var intendedMagnitude;
+	forwardVel=move_toward(forwardVel,0,3.5*delta);
+	intendedYawDiff=0
 	match(currentState):
 		PLAYERSTATE.ACT_JUMP:
 			dragThreshold = MAX_RUN_SPEED;
 		_:
 			dragThreshold = MAX_RUN_SPEED*1.5;
 	forwardVel = move_toward(forwardVel,0,delta*STANDARD_DRAG);
-	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
-	if (movementVector2D != Vector2.ZERO):
+	if (movementVector2D!=Vector2.ZERO):
+		var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 		intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
-		intendedMagnitude = movementVector3D.length();
+		intendedMagnitude=movementVector2D.length();
+		var addedForward=STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*delta*intendedMagnitude;
+		
+		#print(cos(intendedYawDiff));
 		forwardVel += STRAIN_FORWARD_FACTOR*cos(intendedYawDiff)*delta*intendedMagnitude;
-		transform.basis=transform.basis.rotated(transform.basis.y,PI*sin(intendedYawDiff)*intendedMagnitude*delta)
+		
+		sidewaysSpeed = intendedMagnitude * sin(intendedYawDiff) * 300.0 *delta;
+		
 	if (forwardVel>dragThreshold):
-		forwardVel -= 1.0*delta;
+		forwardVel -= 10*delta;
 	if (forwardVel<-16):
-		forwardVel += 1.0*delta;
+		print('yes');
+		forwardVel += 10*delta;
 	var magVector = forwardVel*transform.basis.z;
 	velocity = Vector3(magVector.x,velocity.y,magVector.z);
-
-
+	#print(sin(deg_to_rad(global_rotation_degrees.y+90)+get_camera_yaw()));
+	velocity+=transform.basis.x*sidewaysSpeed;
 func act_test(delta):
 	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 
@@ -426,13 +435,15 @@ func act_ledge_grab(delta):
 	#global_basis = ledgeGrabbedObject.global_basis
 	#global_position = ledgeGrabbedObject.global_position;
 	if (movementVector2D != Vector2.ZERO):
-		if (abs(intendedYawDiff)>PI/2.0):
+		if (abs(intendedYawDiff)>PI/2.0 and ledgeLetGo):
 			currentState = PLAYERSTATE.ACT_JUMP;
+			ledgeLetGo=false;
 			#if (addVelOnLetGo):
 				#velocity += addedVel/delta;
 		elif (ledgeLetGo and movementVector2D.length()>0.8):
 			currentState = PLAYERSTATE.ACT_JUMP;
 			velocity.y = 10;
+			ledgeLetGo=false;
 			#if (addVelOnLetGo):
 				#velocity += addedVel/delta;
 		return;
