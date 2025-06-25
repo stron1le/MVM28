@@ -20,7 +20,7 @@ func _process(delta):
 
 
 func add_test_weapon():
-	var x = load("res://Items/WeaponItem/DefaultWeapon.tres").duplicate();
+	var x = load("res://Items/WeaponItem/default_weapon.tres").duplicate();
 	add_to_Inventory(x);
 
 
