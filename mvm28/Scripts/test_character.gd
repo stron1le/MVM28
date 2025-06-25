@@ -368,6 +368,8 @@ func aerialAdjustment(delta):
 	velocity = Vector3(magVector.x,velocity.y,magVector.z);
 	#print(sin(deg_to_rad(global_rotation_degrees.y+90)+get_camera_yaw()));
 	velocity+=transform.basis.x*sidewaysSpeed;
+	slideX=velocity.x;
+	slideZ=velocity.z;
 func act_test(delta):
 	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 

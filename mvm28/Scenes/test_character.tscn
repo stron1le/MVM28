@@ -103,7 +103,6 @@ offset_bottom = 52.0
 texture = ExtResource("5_pwth5")
 expand_mode = 1
 script = ExtResource("6_mgxxk")
-mappedButton = 1
 
 [node name="IconTexture" type="TextureRect" parent="Control/ActionButton 3"]
 layout_mode = 0

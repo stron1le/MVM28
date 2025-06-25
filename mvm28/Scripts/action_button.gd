@@ -1,7 +1,7 @@
 extends TextureRect
 
 @export var currentItem:Item;
-@export var mappedButton:BUTTONACKNOWLEDGEMENT;
+@export var mappedButton:BUTTONACKNOWLEDGEMENT = BUTTONACKNOWLEDGEMENT.SHOULDERLEFT;
 
 enum BUTTONACKNOWLEDGEMENT {
 	SHOULDERLEFT = 1,
