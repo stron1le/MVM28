@@ -60,8 +60,8 @@ var ledgeLetGo:bool = false;
 var addVelOnLetGo:bool = true;
 var movementVector2D:Vector2;
 var movementVector3D:Vector3;
-var forwardShapeCast:ShapeCast3D;
-var aboveForwardShapeCast:ShapeCast3D;
+var forwardShapeCast:RayCast3D;
+var aboveForwardShapeCast:RayCast3D;
 var downwardCast:RayCast3D;
 static var singleton;
 static var ActionItem1:Item;
@@ -81,8 +81,8 @@ func _ready():
 	await get_tree().physics_frame
 	shapeCastReporter = $ShapeCastResultReporter
 	(shapeCastReporter).reparent(get_tree().root);
-	forwardShapeCast = $ForwardShapeCast as ShapeCast3D;
-	aboveForwardShapeCast = $ForwardAboveCast as ShapeCast3D;
+	forwardShapeCast = $ForwardShapeCast as RayCast3D;
+	aboveForwardShapeCast = $ForwardAboveCast as RayCast3D;
 	downwardCast=$DownwardCast as RayCast3D;
 
 func HPChanged(amount):
@@ -219,36 +219,8 @@ func act_jump(delta):
 		canCutJump = false;
 		currentState = (PLAYERSTATE.ACT_STANDING if intendedMagnitude == 0 
 				else PLAYERSTATE.ACT_WALKING);
-	aboveForwardShapeCast.force_shapecast_update();
-	forwardShapeCast.force_shapecast_update();
-	var shapecastsSatisfied:bool = (!aboveForwardShapeCast.is_colliding() and forwardShapeCast.is_colliding());
-	
-	var wallcheck = $Wallcheck as ShapeCast3D;
-	wallcheck.force_shapecast_update();
-	
-	if (wallcheck.is_colliding() and velocity.y<0 and shapecastsSatisfied):
-		var wallNorm=wallcheck.get_collision_normal(0);
-		wallNorm.y=0;
-		look_at(global_position+wallNorm);
-		downwardCast.global_position.x=wallcheck.get_collision_point(0).x+transform.basis.z.x*.1;
-		downwardCast.global_position.z=wallcheck.get_collision_point(0).z+transform.basis.z.z*.1;
-		downwardCast.force_raycast_update();
-		var prevPosition=global_position
-		global_position.y=downwardCast.get_collision_point().y-2;
-		$GroundCheck.force_shapecast_update();
-		if ($GroundCheck.is_colliding()):
-			global_position=prevPosition;
-			print('hit');
-		else:
-			currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
-			canCutJump=false;
-			var hitObject = downwardCast.get_collider();
-			if (ledgeGrabbedObject.get_parent()):
-				ledgeGrabbedObject.reparent(hitObject);
-			else:
-				hitObject.add_child(ledgeGrabbedObject)
-			ledgeGrabbedObject.global_position=global_position;
-			ledgeGrabbedObject.global_basis=global_basis;
+	ledge_check();
+
 func act_greatsword_walk(delta):
 	var intendedMagnitude = movementVector2D.length();
 	if (movementVector2D != Vector2.ZERO):
@@ -464,29 +436,34 @@ func get_horizontal_forward():
 	return forVec;
 
 
-func ledge_check():
+func current_ledge_check():
 	if (velocity.y>0):
 		return;
-	forwardShapeCast.force_shapecast_update();
-	aboveForwardShapeCast.force_shapecast_update();
-	if (forwardShapeCast.is_colliding() and not aboveForwardShapeCast.is_colliding()):
-		move_and_collide(forwardShapeCast.target_position.length()*(transform.basis.z));
-		var wallNorm = forwardShapeCast.collision_result[0].normal*-1;
-		var forwardVec = get_horizontal_forward()
-		wallNorm = Vector3(wallNorm.x,0,wallNorm.z).normalized();
-		var targetAngle = forwardVec.signed_angle_to(wallNorm,transform.basis.y);
-		transform.basis = transform.basis.rotated(transform.basis.y,targetAngle);
+	if (forwardShapeCast.is_colliding() and !aboveForwardShapeCast.is_colliding() and forwardShapeCast.get_collision_normal().y<=0):
+		print('success');
+		move_and_collide(transform.basis.z);
+		var direction=forwardShapeCast.get_collision_normal();
+		direction.y=0;
+		look_at(global_position+direction)
+		downwardCast.global_position.x=forwardShapeCast.get_collision_point().x
+		downwardCast.global_position.z=forwardShapeCast.get_collision_point().z
 		downwardCast.force_raycast_update();
-		if (downwardCast.is_colliding()):
-			var hitObject = downwardCast.get_collider();
-			global_position.y = downwardCast.get_collision_point().y-2;
-			canCutJump = false;
-			currentState = PLAYERSTATE.ACT_LEDGE_GRAB;
-			if (ledgeGrabbedObject.get_parent()):
-				ledgeGrabbedObject.reparent(hitObject);
-			else:
-				hitObject.add_child(ledgeGrabbedObject)
-			ledgeGrabbedObject.global_basis = global_basis;
-			ledgeGrabbedObject.global_position = global_position;
-			ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
-			ledgeLetGo = false;
+		if (!downwardCast.is_colliding()):
+			while !downwardCast.is_colliding():
+				downwardCast.global_position.x+=transform.basis.z.x*.1;
+				downwardCast.global_position.z+=transform.basis.z.z*.1;
+				downwardCast.force_raycast_update();
+		global_position.y=downwardCast.get_collision_point().y-2;
+		currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
+		canCutJump=false;
+		var hitObject = downwardCast.get_collider();
+		if (ledgeGrabbedObject.get_parent()):
+			ledgeGrabbedObject.reparent(hitObject);
+		else:
+			hitObject.add_child(ledgeGrabbedObject)
+		ledgeGrabbedObject.global_position=global_position;
+		ledgeGrabbedObject.global_basis=global_basis;
+		ledgeLetGo = false;
+		ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
+func ledge_check():
+	current_ledge_check();
