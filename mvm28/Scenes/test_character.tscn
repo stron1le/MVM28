@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://1k6dthk2bt0o"]
+[gd_scene load_steps=12 format=3 uid="uid://1k6dthk2bt0o"]
 
 [ext_resource type="Script" uid="uid://rlyeabgpklfj" path="res://Scripts/test_character.gd" id="1_fksbf"]
 [ext_resource type="PackedScene" uid="uid://dgeh53kc8sfcu" path="res://Scenes/pause_menu.tscn" id="2_446ey"]
@@ -17,14 +17,10 @@ distance_fade_max_distance = 2.0
 [sub_resource type="SphereShape3D" id="SphereShape3D_iy7e0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_co0b2"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_co0b2"]
-height = 1.5
-radius = 0.8
+radius = 0.45
 
 [node name="TestCharacter" type="CharacterBody3D" node_paths=PackedStringArray("dashTimer", "rightHand", "ledgeGrabbedObject") groups=["DestroyOnLoad", "Player"]]
 collision_mask = 2
-floor_snap_length = 0.3
 script = ExtResource("1_fksbf")
 currentState = 1
 forwardVel = 7.0
@@ -165,18 +161,12 @@ collision_mask = 2
 
 [node name="DownwardCast" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.37322, 0.61)
-target_position = Vector3(0, -2.735, 0)
+target_position = Vector3(0, -2.373, 0)
 collision_mask = 2
 
 [node name="GroundCheck" type="ShapeCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_co0b2")
-target_position = Vector3(0, 0, 0)
-collision_mask = 2
-
-[node name="Wallcheck" type="ShapeCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("CylinderShape3D_co0b2")
 target_position = Vector3(0, 0, 0)
 collision_mask = 2
 

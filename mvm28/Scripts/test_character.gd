@@ -35,6 +35,7 @@ enum PLAYERSTATE {
 	ACT_GREATSWORD_SWING,
 	ACT_TEST,ACT_DASHING,
 	ACT_LEDGE_GRAB,
+	ACT_WALL_SLIDE
 }
 
 
@@ -121,6 +122,8 @@ func _physics_process(delta):
 			act_dashing(delta);
 		PLAYERSTATE.ACT_LEDGE_GRAB:
 			act_ledge_grab(delta);
+		PLAYERSTATE.ACT_WALL_SLIDE:
+			act_wall_slide(delta);
 		_:
 			print("There is no such state " + str(currentState))
 			act_walking(delta);
@@ -208,17 +211,25 @@ func calculate_Yspeed_based_on_horizontal_speed(initialSpeed,multiplier):
 
 func act_jump(delta):
 	var intendedMagnitude = movementVector2D.length();
-	if (canCutJump and not Input.is_action_pressed("Jump") and velocity.y>0):
+	if (velocity.y<0):
+		canCutJump=false;
+	if (canCutJump and not Input.is_action_pressed("Jump")):
 		velocity.y *= CUT_JUMP_MULTIPLIER;
 		canCutJump = false;
 	velocity += get_gravity()*delta;
 	aerialAdjustment(delta);
 	move_and_slide();
-	
 	if (is_on_floor()):
 		canCutJump = false;
 		currentState = (PLAYERSTATE.ACT_STANDING if intendedMagnitude == 0 
 				else PLAYERSTATE.ACT_WALKING);
+	if (Input.is_action_just_pressed("WallGrab") and is_on_wall()):
+		var wallDirection=get_wall_normal();
+		move_and_collide(get_wall_normal()*-10);
+		currentState=PLAYERSTATE.ACT_WALL_SLIDE;
+		var angleToWall=get_wall_normal().signed_angle_to(transform.basis.z,Vector3.UP);
+		look_at(global_position-get_wall_normal());
+		transform.basis = transform.basis.rotated(Vector3.UP,sign(angleToWall)*deg_to_rad(90));
 	ledge_check();
 
 func act_greatsword_walk(delta):
@@ -406,9 +417,7 @@ func act_ledge_grab(delta):
 	var intendedYawDiff = transform.basis.z.signed_angle_to(movementVector3D,transform.basis.y);
 	var addedVel = ledgeGrabbedObject.global_position-ledgeGrabbedPrevPosition
 	ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
-	var newForward=-ledgeGrabbedObject.transform.basis.z.normalized();
-	newForward.y=0;
-	look_at(position+newForward);
+	global_rotation=ledgeGrabbedObject.global_rotation;
 	global_position = ledgeGrabbedObject.global_position;
 	if (movementVector2D != Vector2.ZERO):
 		if (abs(intendedYawDiff)>PI/2.0 and ledgeLetGo):
@@ -453,7 +462,12 @@ func current_ledge_check():
 				downwardCast.global_position.x+=transform.basis.z.x*.1;
 				downwardCast.global_position.z+=transform.basis.z.z*.1;
 				downwardCast.force_raycast_update();
+		var prevPosition=global_position;
 		global_position.y=downwardCast.get_collision_point().y-2;
+		$GroundCheck.force_shapecast_update();
+		if ($GroundCheck.is_colliding()):
+			global_position=prevPosition;
+			return;
 		currentState=PLAYERSTATE.ACT_LEDGE_GRAB;
 		canCutJump=false;
 		var hitObject = downwardCast.get_collider();
@@ -467,3 +481,8 @@ func current_ledge_check():
 		ledgeGrabbedPrevPosition = ledgeGrabbedObject.global_position;
 func ledge_check():
 	current_ledge_check();
+func act_wall_slide(delta):
+	velocity=5*transform.basis.z;
+	move_and_slide();
+	if (is_on_wall()):
+		print(get_wall_normal().angle_to(transform.basis.x));
