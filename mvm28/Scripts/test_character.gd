@@ -19,7 +19,7 @@ const MAX_DASH_TURN_SPEED = deg_to_rad(90);
 const BRAKE_JUMP_SPEEDS = Vector2(20,10)
 const CUT_JUMP_MULTIPLIER = 0.5;
 const STANDARD_DRAG = 0.35;
-const STRAIN_FORWARD_FACTOR = 20;
+const STRAIN_FORWARD_FACTOR = 10;
 const DRAG_EXCESS_FORWARD_FACTOR = 1.0;
 const DRAG_EXCESS_BACKWARD_FACTOR = 2.0;
 const DASH_SPEED = 15;
@@ -217,7 +217,7 @@ func act_jump(delta):
 		velocity.y *= CUT_JUMP_MULTIPLIER;
 		canCutJump = false;
 	velocity += get_gravity()*delta;
-	aerialAdjustment(delta);
+	updateAirWithoutTurn(delta);
 	move_and_slide();
 	if (is_on_floor()):
 		canCutJump = false;
@@ -318,7 +318,7 @@ func coyoteTimerSteps():
 			dashTimer.stop();
 
 
-func aerialAdjustment(delta):
+func updateAirWithoutTurn(delta):
 	var dragThreshold;
 	var sidewaysSpeed=0;
 	var intendedYawDiff;
@@ -349,10 +349,12 @@ func aerialAdjustment(delta):
 		forwardVel += 10*delta;
 	var magVector = forwardVel*transform.basis.z;
 	velocity = Vector3(magVector.x,velocity.y,magVector.z);
-	#print(sin(deg_to_rad(global_rotation_degrees.y+90)+get_camera_yaw()));
-	velocity+=transform.basis.x*sidewaysSpeed;
 	slideX=velocity.x;
 	slideZ=velocity.z;
+	slideX+=(transform.basis.x*sidewaysSpeed).x;
+	slideZ+=(transform.basis.x*sidewaysSpeed).z;
+	velocity.x=slideX;
+	velocity.z=slideZ;
 func act_test(delta):
 	var movementVector3D = Vector3(movementVector2D.x,0,movementVector2D.y).rotated(transform.basis.y,get_camera_yaw());
 
